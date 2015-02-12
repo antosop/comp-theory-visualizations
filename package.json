@@ -1,0 +1,23 @@
+{
+  "name": "comp-theory-visualizations",
+  "version": "0.0.1",
+  "description": "Project to practice rich front end development while implementing basic lessons learened from computational theory.",
+  "main": "index.js",
+  "dependencies": {
+    "d3": "^3.5.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antosop/comp-theory-visualizations.git"
+  },
+  "author": "Landon Crapo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/antosop/comp-theory-visualizations/issues"
+  },
+  "homepage": "https://github.com/antosop/comp-theory-visualizations"
+}
