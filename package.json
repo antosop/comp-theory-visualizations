@@ -4,7 +4,8 @@
   "description": "Project to practice rich front end development while implementing basic lessons learened from computational theory.",
   "main": "index.js",
   "dependencies": {
-    "d3": "^3.5.5"
+    "d3": "^3.5.5",
+    "express": "^4.11.2"
   },
   "devDependencies": {},
   "scripts": {
