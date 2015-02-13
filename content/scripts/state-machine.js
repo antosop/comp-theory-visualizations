@@ -1,9 +1,9 @@
-var StateMachine = function(states,initialState){
-    this.states = states;
-    this.initialState = states[initialState];
-    this.acceptStates = [];
-    for (var i = 2, i < arguments.length, i++){
-        this.acceptStates.push(states[arguments[i]]);
+"use strict";
+
+export default class StateMachine {
+    constructor(states, initialState, ...acceptStates) {
+        this.states = states;
+        this.initialState = states[initialState];
+        this.acceptStates = acceptStates.map(s => states[s]);
     }
 }
-module.export = StateMachine;
