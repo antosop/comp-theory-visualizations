@@ -1,38 +1,64 @@
 "use strict";
 
 export default class StateMachine {
-    constructor(...states) {
-        if (typeof states !== 'undefined'){
-            this.states = states;
+    constructor(object) {
+        if (object){
+            this.states = object.states;
+            this.names = {};
+            this.updateNames();
+            // two dimensional array
+            this.transitions = object.transitions;
         } else {
-            this.states = [];
+            this.states = [new State(null,0,0,false)];
+            this.names = {};
+            this.transitions = [[]];
         }
     }
-    initialState() {
-        states[0];
+
+    updateNames() {
+            for (var i = 0; i < this.states.length; i++) {
+                this.updateName(i);
+            }
     }
-    acceptStates() {
+
+    updateName(index) {
+        var s = this.state[index];
+        if (s.name) this.names[s.name] = i;
+    }
+
+    getInitialState() {
+        return this.states[0];
+    }
+
+    getAcceptStates() {
         return this.states.filter(s => s.isAcceptState);
     }
-    outgoingTransitions(state) {
+
+    getTransitions(state) {
+        var stateIndex = getStateIndex(state);
+        if (stateIndex)
+            return this.transitions[stateIndex];
+    }
+
+    addState(name,x,y,isAcceptState) {
+        var index = this.states.length;
+        this.states.append({name:name, x:x, y:y, isAcceptState:isAcceptState});
+        this.updateName(index);
+    }
+
+    getStateIndex(state){
         if (typeof state === 'number')
-            return this.states[state].transitions;
-        return state.transitions;
+            return this.states[state] && state;
+        if (typeof state === 'string')
+            return this.names[state];
+        if (state.name)
+            return this.names[state.name]];
+
     }
-    incomingTransitions(state) {
-        var transitions = [];
-        var toState;
-        if (typeof state === 'number'){
-            toState = this.states[state];
-        } else {
-            toState = state;
-        }
-        this.states.forEach(s => {
-            s.transitions.forEach(t => {
-                if (t.toState == toState)
-                    transitions.push(t);
-            });
-        });
+
+    addTransition(fromState, toState, input, someArcParameter) {
+       var fromStateIndex = getStateIndex(fromState);
+       var toStateIndex = get StateIndex(toState);
+       this.transitions[fromStateIndex].append({character:input, toState:toStateIndex, arc:someArcParameter});
     }
-    addState(state)
 }

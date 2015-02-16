@@ -2,12 +2,7 @@
 
 import StateMachine from "./state-machine";
 
-var stateMachine = new StateMachine({
-    a:1,
-    b:2,
-    c:3,
-    d:4
-},'a','d');
+var stateMachine = new StateMachine();
 
 console.log(stateMachine.acceptStates[0]);
 d3.select("body")
@@ -20,6 +15,6 @@ d3.select("body")
     if (stateMachine.initialState === stateMachine.states[d]){
         text += 'start ';
     }
-    text += 'node ' + d + ':\t'+ stateMachine.states[d]
+    text += 'node ' + d + ':\t'+ stateMachine.states[d];
     return text;
   });
