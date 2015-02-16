@@ -1,4 +1,7 @@
-var State = function(){
+"use strict";
 
+export default class State {
+    constructor(...stateTransitions) {
+        this.transitions = stateTransitions;
+    }
 }
-module.export = State;
