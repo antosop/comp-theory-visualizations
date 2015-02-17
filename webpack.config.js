@@ -1,7 +1,7 @@
 module.exports = {
 	//configuration
 	entry: {
-		main: "./content/scripts/main.js",
+		main: ["./content/scripts/polyfill.js", "./content/scripts/main.js"],
 		d3: "./node_modules/d3/d3.js"
 	},
 	output: {

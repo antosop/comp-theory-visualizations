@@ -67,4 +67,35 @@ export default class StateMachine {
        var toStateIndex = getStateIndex(toState);
        this.transitions.append({fromState:fromStateIndex, character:input, toState:toStateIndex});
     }
+
+    matchString(string){
+        var currentStates = [0];
+        var characterTransitions = this.transitions.filter(t => t.input !== 'other');
+        var otherTransitions = this.transitions.filter(t => t.input === 'other');
+        for (var i = 0; i < string.length; i++){
+            var c = string.charAt(i);
+            var newStates = [];
+            var matchedStates = [];
+            characterTransitions.forEach(t => {
+                if (currentStates.includes(t.fromState)) {
+                    if (t.input === c && !newStates.includes(t.toState)){
+                        newStates.push(t.toState);
+                        if (!matchedStates.includes(t.fromState)){
+                            matchedStates.push(t.fromState);
+                        }
+                    }
+                }
+            });
+            var unmatchedStates = currentStates.filter(s => !matchedStates.includes(s));
+            otherTransitions.forEach(t => {
+                if (unmatchedStates.includes(t.fromState)) {
+                    newStates.push(t.toState);
+                }
+            });
+            currentStates = newStates;
+            console.log(c);
+            console.log(currentStates);
+        }
+        console.log(currentStates.filter(s => this.states[s].isAcceptState).map(s => this.states[s].response));
+    }
 }

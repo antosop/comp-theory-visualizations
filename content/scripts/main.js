@@ -5,21 +5,22 @@ var stateMachine = new StateMachine({
     states: [
         {
             name:null,
-            x:50,
+            x:100,
             y:200,
             isAcceptState:false
         },
         {
             name:'found h',
-            x:150,
-            y:250,
+            x:200,
+            y:200,
             isAcceptState:false
         },
         {
             name:'found hi',
-            x:250,
+            x:300,
             y:200,
-            isAcceptState:true
+            isAcceptState:true,
+            response: 'Hello!'
         }
     ],
     transitions: [
@@ -55,6 +56,11 @@ var stateMachine = new StateMachine({
         }
     ]
 });
+
+stateMachine.matchString("this");
+
+var pathStartPositions = [];
+
 var svg = d3.select("svg").attr('stroke-width',2);
 var paths = svg.append("g").selectAll("path")
   .data(stateMachine.transitions)
@@ -87,11 +93,15 @@ var paths = svg.append("g").selectAll("path")
           y1 = fs.y - 25;
           y2 = fs.y;
       }
+      d.startX = x1;
+      d.startY = y1;
+
       return 'M' + x1 + ',' + y1 + 'A' + r + ',' + r + ' 0 '+ (loop?1:0) + ' '+ (loop?0:1) + ' ' + x2 + ',' + y2;
   })
   .attr('stroke', 'black')
   .attr('fill','none')
   .attr('marker-end', 'url(#triangle)');
+
 var circles = svg.append("g").selectAll("circle")
   .data(stateMachine.states)
   .enter()
@@ -102,3 +112,34 @@ var circles = svg.append("g").selectAll("circle")
   .attr('cx',d => d.x)
   .attr('cy',d => d.y)
   .attr('name',d => d.name);
+
+var labelContainer = svg.append("g").selectAll("circle")
+    .data(stateMachine.transitions)
+    .enter()
+    .append("circle")
+    .attr('cx', d => d.startX)
+    .attr('cy', d => d.startY)
+    .attr('r', 10)
+    .attr('fill','black');
+
+var transitionLabels = svg.append("g").selectAll("text")
+    .data(stateMachine.transitions)
+    .enter()
+    .append("text")
+    .attr('text-anchor','middle')
+    .attr('x', d => d.startX)
+    .attr('y', d => d.startY+5)
+    .attr('fill',d => d.input === 'other' ? 'yellow' : 'white')
+    .text(d => d.input === 'other' ? '*' : d.input);
+
+var stateLabels = svg.append("g").selectAll("text")
+    .data(stateMachine.states)
+    .enter()
+    .append("text")
+    .attr('text-anchor','middle')
+    .attr('x',d => d.x)
+    .attr('y',d => d.y+5)
+    .attr('fill','black')
+    .text((d,i) => i);
+
+
