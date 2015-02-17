@@ -6,19 +6,19 @@ var stateMachine = new StateMachine({
         {
             name:null,
             x:50,
-            y:100,
+            y:200,
             isAcceptState:false
         },
         {
             name:'found h',
             x:150,
-            y:100,
+            y:250,
             isAcceptState:false
         },
         {
             name:'found hi',
             x:250,
-            y:100,
+            y:200,
             isAcceptState:true
         }
     ],
@@ -61,23 +61,33 @@ var paths = svg.append("g").selectAll("path")
   .enter()
   .append("path")
   .attr('d',d => {
-      //var fs = stateMachine.states[d.fromState];
-      //var ts = stateMachine.states[d.toState];
-      //var r = 25;
-      //var largeArk = 1;
-      //if(d.fromState !== d.toState){
-      var largeArk = 0;
-      var dx = (ts.x-fs.x);
-      var dy = (ts.y-fs.y);
-      var m = Math.sqrt(dx*dx+dy*dy);
-      var sign = dx > 0 ? 1 : -1;
-      var x1 = fs.x+Math.sin(Math.asin(dx/m)+sign*Math.PI/4) * 25;
-      var x2 = ts.x-Math.sin(Math.asin(dx/m)-sign*Math.PI/4) * 25;
-      var y1 = fs.y+Math.cos(Math.acos(dy/m)+sign*Math.PI/4) * 25;
-      var y2 = ts.y-Math.cos(Math.acos(dy/m)-sign*Math.PI/4) * 25;
-      var r = m/1.75;
-      //}
-      return 'M' + x1 + ',' + y1 + 'A' + r + ',' + r + ' 0 '+ largeArk + ' 1 ' + x2 + ',' + y2;
+      var fs = stateMachine.states[d.fromState];
+      var ts = stateMachine.states[d.toState];
+      var x1;
+      var x2;
+      var y1;
+      var y2;
+      var r = 25;
+      var loop = true;
+      if(d.fromState !== d.toState){
+          loop = false;
+          var dx = (ts.x-fs.x);
+          var dy = (ts.y-fs.y);
+          var m = Math.sqrt(dx*dx+dy*dy);
+          var sign = dy > 0 ? 1 : -1;
+          var a = sign*Math.acos(dx/m);
+          x1 = fs.x+Math.cos(a-Math.PI/4) * 25;
+          x2 = ts.x-Math.cos(a+Math.PI/4) * 25;
+          y1 = fs.y+Math.sin(a-Math.PI/4) * 25;
+          y2 = ts.y-Math.sin(a+Math.PI/4) * 25;
+          r = m/1.75;
+      } else {
+          x1 = fs.x;
+          x2 = fs.x - 25;
+          y1 = fs.y - 25;
+          y2 = fs.y;
+      }
+      return 'M' + x1 + ',' + y1 + 'A' + r + ',' + r + ' 0 '+ (loop?1:0) + ' '+ (loop?0:1) + ' ' + x2 + ',' + y2;
   })
   .attr('stroke', 'black')
   .attr('fill','none')
@@ -92,11 +102,3 @@ var circles = svg.append("g").selectAll("circle")
   .attr('cx',d => d.x)
   .attr('cy',d => d.y)
   .attr('name',d => d.name);
-  //.text(d => {
-    //let text = '';
-    //if (stateMachine.initialState === d){
-        //text += 'start ';
-    //}
-    //text += 'node ' + (d.name ? d.name : '') + ':\t'+ d.x + ',' +d.y;
-    //return text;
-  //});
