@@ -6,12 +6,18 @@ export default class StateMachine {
             this.states = object.states;
             this.names = {};
             this.updateNames();
-            // two dimensional array
             this.transitions = object.transitions;
         } else {
-            this.states = [new State(null,0,0,false)];
+            this.states = [
+                {
+                    name:null,
+                    x:0,
+                    y:0,
+                    isAcceptState:false
+                }
+            ];
             this.names = {};
-            this.transitions = [[]];
+            this.transitions = [];
         }
     }
 
@@ -22,8 +28,8 @@ export default class StateMachine {
     }
 
     updateName(index) {
-        var s = this.state[index];
-        if (s.name) this.names[s.name] = i;
+        var s = this.states[index];
+        if (s.name) this.names[s.name] = index;
     }
 
     getInitialState() {
@@ -37,7 +43,7 @@ export default class StateMachine {
     getTransitions(state) {
         var stateIndex = getStateIndex(state);
         if (stateIndex)
-            return this.transitions[stateIndex];
+            return this.transitions.filter(t => t.fromState === stateIndex);
     }
 
     addState(name,x,y,isAcceptState) {
@@ -52,13 +58,13 @@ export default class StateMachine {
         if (typeof state === 'string')
             return this.names[state];
         if (state.name)
-            return this.names[state.name]];
+            return this.names[state.name];
 
     }
 
-    addTransition(fromState, toState, input, someArcParameter) {
+    addTransition(fromState, toState, input) {
        var fromStateIndex = getStateIndex(fromState);
-       var toStateIndex = get StateIndex(toState);
-       this.transitions[fromStateIndex].append({character:input, toState:toStateIndex, arc:someArcParameter});
+       var toStateIndex = getStateIndex(toState);
+       this.transitions.append({fromState:fromStateIndex, character:input, toState:toStateIndex});
     }
 }
