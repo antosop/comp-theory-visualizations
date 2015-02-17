@@ -10,14 +10,26 @@ var stateMachine = new StateMachine({
             isAcceptState:false
         },
         {
-            name:'found h',
+            name:'space',
             x:200,
             y:200,
             isAcceptState:false
         },
         {
-            name:'found hi',
+            name:'found h',
             x:300,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'found hi',
+            x:400,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'found word hi',
+            x:500,
             y:200,
             isAcceptState:true,
             response: 'Hello!'
@@ -26,7 +38,7 @@ var stateMachine = new StateMachine({
     transitions: [
         {
             fromState: 0,
-            input: 'h',
+            input: ' ',
             toState: 1
         },
         {
@@ -36,12 +48,12 @@ var stateMachine = new StateMachine({
         },
         {
             fromState: 1,
-            input: 'i',
+            input: 'h',
             toState: 2
         },
         {
             fromState: 1,
-            input: 'h',
+            input: ' ',
             toState: 1
         },
         {
@@ -51,13 +63,38 @@ var stateMachine = new StateMachine({
         },
         {
             fromState: 2,
+            input: 'i',
+            toState: 3
+        },
+        {
+            fromState: 2,
+            input: ' ',
+            toState: 1
+        },
+        {
+            fromState: 2,
             input: 'other',
-            toState: 2
+            toState: 0
+        },
+        {
+            fromState: 3,
+            input: ' ',
+            toState: 4
+        },
+        {
+            fromState: 3,
+            input: 'other',
+            toState: 0
+        },
+        {
+            fromState: 4,
+            input: 'other',
+            toState: 4
         }
     ]
 });
 
-stateMachine.matchString("this");
+stateMachine.matchString("this is his home. hi he said.");
 
 var pathStartPositions = [];
 
