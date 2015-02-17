@@ -61,22 +61,22 @@ var paths = svg.append("g").selectAll("path")
   .enter()
   .append("path")
   .attr('d',d => {
-      var fs = stateMachine.states[d.fromState];
-      var ts = stateMachine.states[d.toState];
-      var r = 25;
-      var largeArk = 1;
-      if(d.fromState !== d.toState){
-        largeArk = 0;
-        var dx = (ts.x-fs.x);
-        var dy = (ts.y-fs.y);
-        var d = Math.sqrt(dx*dx+dy*dy);
-        var sign = dx > 0 ? 1 : -1;
-        var x1 = fs.x+Math.sin(Math.asin(dx/d)+sign*Math.PI/4) * 25;
-        var x2 = ts.x-Math.sin(Math.asin(dx/d)-sign*Math.PI/4) * 25;
-        var y1 = fs.y+Math.cos(Math.acos(dy/d)+sign*Math.PI/4) * 25;
-        var y2 = ts.y-Math.cos(Math.acos(dy/d)-sign*Math.PI/4) * 25;
-        r = d/1.75;
-      }
+      //var fs = stateMachine.states[d.fromState];
+      //var ts = stateMachine.states[d.toState];
+      //var r = 25;
+      //var largeArk = 1;
+      //if(d.fromState !== d.toState){
+      var largeArk = 0;
+      var dx = (ts.x-fs.x);
+      var dy = (ts.y-fs.y);
+      var m = Math.sqrt(dx*dx+dy*dy);
+      var sign = dx > 0 ? 1 : -1;
+      var x1 = fs.x+Math.sin(Math.asin(dx/m)+sign*Math.PI/4) * 25;
+      var x2 = ts.x-Math.sin(Math.asin(dx/m)-sign*Math.PI/4) * 25;
+      var y1 = fs.y+Math.cos(Math.acos(dy/m)+sign*Math.PI/4) * 25;
+      var y2 = ts.y-Math.cos(Math.acos(dy/m)-sign*Math.PI/4) * 25;
+      var r = m/1.75;
+      //}
       return 'M' + x1 + ',' + y1 + 'A' + r + ',' + r + ' 0 '+ largeArk + ' 1 ' + x2 + ',' + y2;
   })
   .attr('stroke', 'black')
