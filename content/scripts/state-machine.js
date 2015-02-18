@@ -72,32 +72,36 @@ export default class StateMachine {
 
     matchString(string){
         var currentStates = [0];
-        var characterTransitions = this.transitions.filter(t => t.input !== 'other');
-        var otherTransitions = this.transitions.filter(t => t.input === 'other');
         for (var i = 0; i < string.length; i++){
             var c = string.charAt(i);
-            var newStates = [];
-            var matchedStates = [];
-            characterTransitions.forEach(t => {
-                if (_.includes(currentStates,t.fromState)) {
-                    if (t.input === c && !_.includes(newStates,t.toState)){
-                        newStates.push(t.toState);
-                        if (!_.includes(matchedStates,t.fromState)){
-                            matchedStates.push(t.fromState);
-                        }
-                    }
-                }
-            });
-            var unmatchedStates = currentStates.filter(s => !_.includes(matchedStates,s));
-            otherTransitions.forEach(t => {
-                if (_.includes(unmatchedStates,t.fromState)) {
-                    newStates.push(t.toState);
-                }
-            });
-            currentStates = newStates;
+            currentStates = this.nextStates(currentStates,c);
             console.log(c);
             console.log(currentStates);
         }
         console.log(currentStates.filter(s => this.states[s].isAcceptState).map(s => this.states[s].response));
+    }
+
+    nextStates(currentStates, input) {
+        var characterTransitions = this.transitions.filter(t => t.input !== 'other');
+        var otherTransitions = this.transitions.filter(t => t.input === 'other');
+        var newStates = [];
+        var matchedStates = [];
+        characterTransitions.forEach(t => {
+            if (_.includes(currentStates,t.fromState)) {
+                if (t.input === input && !_.includes(newStates,t.toState)){
+                    newStates.push(t.toState);
+                    if (!_.includes(matchedStates,t.fromState)){
+                        matchedStates.push(t.fromState);
+                    }
+                }
+            }
+        });
+        var unmatchedStates = currentStates.filter(s => !_.includes(matchedStates,s));
+        otherTransitions.forEach(t => {
+            if (_.includes(unmatchedStates,t.fromState)) {
+                newStates.push(t.toState);
+            }
+        });
+        return newStates;
     }
 }
