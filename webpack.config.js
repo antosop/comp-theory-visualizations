@@ -1,7 +1,7 @@
 module.exports = {
 	//configuration
 	entry: {
-		main: ["./content/scripts/polyfill.js", "./content/scripts/main.js"],
+		main: ["./content/scripts/main.js"],
 		d3: "./node_modules/d3/d3.js"
 	},
 	output: {
@@ -10,7 +10,8 @@ module.exports = {
 	},
     module: {
         loaders: [
-            { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader' }
+            { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader' },
+            { test: /\.css$/, loader: "style-loader!css-loader" }
         ]
     }
 };

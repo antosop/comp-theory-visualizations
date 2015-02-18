@@ -4,8 +4,11 @@
   "description": "Project to practice rich front end development while implementing basic lessons learened from computational theory.",
   "main": "index.js",
   "dependencies": {
+    "css-loader": "^0.9.1",
     "d3": "^3.5.5",
-    "express": "^4.11.2"
+    "express": "^4.11.2",
+    "lodash": "^3.2.0",
+    "style-loader": "^0.8.3"
   },
   "devDependencies": {
     "6to5-core": "^3.6.2",

@@ -1,18 +1,20 @@
 "use strict";
-import StateMachine from './state-machine'
+import StateMachine from './state-machine';
+import css from '../styles/main.css';
+import _ from 'lodash';
 
 var stateMachine = new StateMachine({
     states: [
         {
-            name:null,
-            x:100,
-            y:200,
+            name:'ready',
+            x:200,
+            y:300,
             isAcceptState:false
         },
         {
-            name:'space',
-            x:200,
-            y:200,
+            name:'wait',
+            x:300,
+            y:400,
             isAcceptState:false
         },
         {
@@ -30,36 +32,36 @@ var stateMachine = new StateMachine({
         {
             name:'found word hi',
             x:500,
-            y:200,
+            y:300,
             isAcceptState:true,
             response: 'Hello!'
         }
     ],
     transitions: [
         {
-            fromState: 0,
+            fromState: 1,
             input: ' ',
-            toState: 1
-        },
-        {
-            fromState: 0,
-            input: 'other',
             toState: 0
         },
         {
             fromState: 1,
+            input: 'other',
+            toState: 1
+        },
+        {
+            fromState: 0,
             input: 'h',
             toState: 2
         },
         {
-            fromState: 1,
+            fromState: 0,
             input: ' ',
-            toState: 1
+            toState: 0
         },
         {
-            fromState: 1,
+            fromState: 0,
             input: 'other',
-            toState: 0
+            toState: 1
         },
         {
             fromState: 2,
@@ -69,12 +71,12 @@ var stateMachine = new StateMachine({
         {
             fromState: 2,
             input: ' ',
-            toState: 1
+            toState: 0
         },
         {
             fromState: 2,
             input: 'other',
-            toState: 0
+            toState: 1
         },
         {
             fromState: 3,
@@ -84,7 +86,7 @@ var stateMachine = new StateMachine({
         {
             fromState: 3,
             input: 'other',
-            toState: 0
+            toState: 1
         },
         {
             fromState: 4,
@@ -94,11 +96,11 @@ var stateMachine = new StateMachine({
     ]
 });
 
-stateMachine.matchString("this is his home. hi he said.");
+stateMachine.matchString("hi he said.");
 
 var pathStartPositions = [];
 
-var svg = d3.select("svg").attr('stroke-width',2);
+var svg = d3.select("svg");
 var paths = svg.append("g").selectAll("path")
   .data(stateMachine.transitions)
   .enter()
@@ -130,53 +132,52 @@ var paths = svg.append("g").selectAll("path")
           y1 = fs.y - 25;
           y2 = fs.y;
       }
-      d.startX = x1;
-      d.startY = y1;
 
       return 'M' + x1 + ',' + y1 + 'A' + r + ',' + r + ' 0 '+ (loop?1:0) + ' '+ (loop?0:1) + ' ' + x2 + ',' + y2;
   })
-  .attr('stroke', 'black')
-  .attr('fill','none')
-  .attr('marker-end', 'url(#triangle)');
+  .classed('transition',true);
+  //.classed('current',d => d.fromState === 0);
 
 var circles = svg.append("g").selectAll("circle")
   .data(stateMachine.states)
   .enter()
   .append("circle")
+  .classed("state",true)
+  .classed("accept-state",d => d.isAcceptState)
+  .classed("current",(d,i) => i === 0)
   .attr('r',25)
-  .attr('stroke','black')
-  .attr('fill','#aaa')
   .attr('cx',d => d.x)
   .attr('cy',d => d.y)
   .attr('name',d => d.name);
 
 var labelContainer = svg.append("g").selectAll("circle")
-    .data(stateMachine.transitions)
+    .data(paths[0])
     .enter()
     .append("circle")
-    .attr('cx', d => d.startX)
-    .attr('cy', d => d.startY)
-    .attr('r', 10)
-    .attr('fill','black');
+    .attr('r',10)
+    .attr('cx', d => d.getPointAtLength(d.getTotalLength()/2).x)
+    .attr('cy', d => d.getPointAtLength(d.getTotalLength()/2).y)
+    .classed("label-container",true);
+
+var characterReplacements = {'other':'*', ' ':'_'};
 
 var transitionLabels = svg.append("g").selectAll("text")
-    .data(stateMachine.transitions)
+    .data(paths[0])
     .enter()
     .append("text")
-    .attr('text-anchor','middle')
-    .attr('x', d => d.startX)
-    .attr('y', d => d.startY+5)
-    .attr('fill',d => d.input === 'other' ? 'yellow' : 'white')
-    .text(d => d.input === 'other' ? '*' : d.input);
+    .attr('x', d => d.getPointAtLength(d.getTotalLength()/2).x)
+    .attr('y', d => d.getPointAtLength(d.getTotalLength()/2).y+5)
+    .classed("transition-label",true)
+    .classed('special',d => (_.has(characterReplacements,d.__data__.input)))
+    .text(d => _.has(characterReplacements,d.__data__.input) ? characterReplacements[d.__data__.input] : d.__data__.input);
 
 var stateLabels = svg.append("g").selectAll("text")
     .data(stateMachine.states)
     .enter()
     .append("text")
-    .attr('text-anchor','middle')
     .attr('x',d => d.x)
     .attr('y',d => d.y+5)
-    .attr('fill','black')
+    .classed('state-label',true)
     .text((d,i) => i);
 
 

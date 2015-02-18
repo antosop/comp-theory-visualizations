@@ -1,5 +1,7 @@
 "use strict";
 
+import _ from 'lodash';
+
 export default class StateMachine {
     constructor(object) {
         if (object){
@@ -77,18 +79,18 @@ export default class StateMachine {
             var newStates = [];
             var matchedStates = [];
             characterTransitions.forEach(t => {
-                if (currentStates.includes(t.fromState)) {
-                    if (t.input === c && !newStates.includes(t.toState)){
+                if (_.includes(currentStates,t.fromState)) {
+                    if (t.input === c && !_.includes(newStates,t.toState)){
                         newStates.push(t.toState);
-                        if (!matchedStates.includes(t.fromState)){
+                        if (!_.includes(matchedStates,t.fromState)){
                             matchedStates.push(t.fromState);
                         }
                     }
                 }
             });
-            var unmatchedStates = currentStates.filter(s => !matchedStates.includes(s));
+            var unmatchedStates = currentStates.filter(s => !_.includes(matchedStates,s));
             otherTransitions.forEach(t => {
-                if (unmatchedStates.includes(t.fromState)) {
+                if (_.includes(unmatchedStates,t.fromState)) {
                     newStates.push(t.toState);
                 }
             });

@@ -1,0 +1,61 @@
+body{
+    background:#222;
+    text-align:center;
+}
+
+svg{
+    background:#555;
+    margin: auto;
+    display: block;
+    stroke-width: 2;
+}
+
+input#string {
+    width:796px;
+}
+
+#triangle {
+    fill:black;
+}
+
+path.transition {
+    stroke:black;
+    fill:none;
+    marker-end: url(#triangle);
+}
+
+path.transition.current {
+    stroke:yellow;
+}
+
+circle.state {
+    stroke:black;
+    fill:#aaa;
+}
+
+circle.state.accept-state {
+    fill:#0f0;
+}
+
+circle.state.current {
+    stroke:yellow;
+}
+
+circle.label-container {
+    stroke: black;
+    fill: black;
+}
+
+text.transition-label {
+    text-anchor:middle;
+    fill:white;
+}
+
+text.transition-label.special {
+    fill:yellow;
+}
+
+text.state-label {
+    text-anchor:middle;
+    fill:black;
+}
