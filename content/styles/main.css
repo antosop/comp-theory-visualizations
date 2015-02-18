@@ -51,13 +51,17 @@ circle.label-container {
     fill: black;
 }
 
+circle.label-container.current {
+    stroke: yellow;
+}
+
 text.transition-label {
     text-anchor:middle;
     fill:white;
 }
 
 text.transition-label.special {
-    fill:#08f;
+    fill:#f00;
 }
 
 text.state-label {

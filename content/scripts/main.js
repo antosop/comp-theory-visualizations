@@ -154,10 +154,11 @@ var labelContainer = svg.append("g").selectAll("circle")
     .data(paths[0])
     .enter()
     .append("circle")
-    .attr('r',10)
+    .attr('r',12)
     .attr('cx', d => d.getPointAtLength(d.getTotalLength()/2).x)
     .attr('cy', d => d.getPointAtLength(d.getTotalLength()/2).y)
-    .classed("label-container",true);
+    .classed("label-container",true)
+    .classed("current",d => d.__data__.fromState ===0);
 
 var characterReplacements = {'other':'*', ' ':'_'};
 
@@ -168,6 +169,7 @@ var transitionLabels = svg.append("g").selectAll("text")
     .attr('x', d => d.getPointAtLength(d.getTotalLength()/2).x)
     .attr('y', d => d.getPointAtLength(d.getTotalLength()/2).y+5)
     .classed("transition-label",true)
+    .classed("current",d => d.__data__.fromState === 0)
     .classed('special',d => (_.has(characterReplacements,d.__data__.input)))
     .text(d => _.has(characterReplacements,d.__data__.input) ? characterReplacements[d.__data__.input] : d.__data__.input);
 
