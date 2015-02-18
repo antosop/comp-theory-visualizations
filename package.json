@@ -13,6 +13,7 @@
   "devDependencies": {
     "6to5-core": "^3.6.2",
     "6to5-loader": "^3.0.0",
+    "parallelshell": "^1.0.4",
     "webpack": "^1.5.3"
   },
   "scripts": {
