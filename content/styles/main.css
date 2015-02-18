@@ -18,6 +18,10 @@ input#string {
     fill:black;
 }
 
+#triangle-selected {
+    fill:yellow;
+}
+
 path.transition {
     stroke:black;
     fill:none;
@@ -26,6 +30,7 @@ path.transition {
 
 path.transition.current {
     stroke:yellow;
+    marker-end: url(#triangle-selected);
 }
 
 circle.state {
@@ -34,7 +39,7 @@ circle.state {
 }
 
 circle.state.accept-state {
-    fill:#0f0;
+    fill:#3BB;
 }
 
 circle.state.current {
@@ -52,7 +57,7 @@ text.transition-label {
 }
 
 text.transition-label.special {
-    fill:yellow;
+    fill:#08f;
 }
 
 text.state-label {

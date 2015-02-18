@@ -135,8 +135,8 @@ var paths = svg.append("g").selectAll("path")
 
       return 'M' + x1 + ',' + y1 + 'A' + r + ',' + r + ' 0 '+ (loop?1:0) + ' '+ (loop?0:1) + ' ' + x2 + ',' + y2;
   })
-  .classed('transition',true);
-  //.classed('current',d => d.fromState === 0);
+  .classed('transition',true)
+  .classed('current',d => d.fromState === 0);
 
 var circles = svg.append("g").selectAll("circle")
   .data(stateMachine.states)
