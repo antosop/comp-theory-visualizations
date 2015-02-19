@@ -1,0 +1,92 @@
+{
+    states: [
+        {
+            name:'ready',
+            x:200,
+            y:300,
+            isAcceptState:false
+        },
+        {
+            name:'wait',
+            x:300,
+            y:400,
+            isAcceptState:false
+        },
+        {
+            name:'found h',
+            x:300,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'found hi',
+            x:400,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'found word hi',
+            x:500,
+            y:300,
+            isAcceptState:true,
+            response: 'Hello!'
+        }
+    ],
+    transitions: [
+        {
+            fromState: 1,
+            input: ' ',
+            toState: 0
+        },
+        {
+            fromState: 1,
+            input: 'other',
+            toState: 1
+        },
+        {
+            fromState: 0,
+            input: 'h',
+            toState: 2
+        },
+        {
+            fromState: 0,
+            input: ' ',
+            toState: 0
+        },
+        {
+            fromState: 0,
+            input: 'other',
+            toState: 1
+        },
+        {
+            fromState: 2,
+            input: 'i',
+            toState: 3
+        },
+        {
+            fromState: 2,
+            input: ' ',
+            toState: 0
+        },
+        {
+            fromState: 2,
+            input: 'other',
+            toState: 1
+        },
+        {
+            fromState: 3,
+            input: ' ',
+            toState: 4
+        },
+        {
+            fromState: 3,
+            input: 'other',
+            toState: 1
+        },
+        {
+            fromState: 4,
+            input: 'other',
+            toState: 4
+        }
+    ]
+}

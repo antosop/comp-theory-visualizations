@@ -79,6 +79,7 @@ export default class StateMachine {
             console.log(currentStates);
         }
         console.log(currentStates.filter(s => this.states[s].isAcceptState).map(s => this.states[s].response));
+        return currentStates;
     }
 
     nextStates(currentStates, input) {

@@ -6,92 +6,136 @@ import _ from 'lodash';
 var stateMachine = new StateMachine({
     states: [
         {
-            name:'ready',
-            x:200,
-            y:300,
-            isAcceptState:false
-        },
-        {
-            name:'wait',
-            x:300,
-            y:400,
-            isAcceptState:false
-        },
-        {
-            name:'found h',
-            x:300,
+            name:'A',
+            x:100,
             y:200,
             isAcceptState:false
         },
         {
-            name:'found hi',
+            name:'B',
+            x:175,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'C',
+            x:250,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'D',
+            x:325,
+            y:200,
+            isAcceptState:false
+        },
+        {
+            name:'E',
             x:400,
             y:200,
-            isAcceptState:false
+            isAcceptState:false,
         },
         {
-            name:'found word hi',
-            x:500,
-            y:300,
+            name:'F',
+            x:475,
+            y:200,
             isAcceptState:true,
-            response: 'Hello!'
+            response:'AloooooHAAAaa!'
+        },
+        {
+            name:'H',
+            x:175,
+            y:100,
+            isAcceptState:false,
+        },
+        {
+            name:'I',
+            x:250,
+            y:100,
+            isAcceptState:true,
+            response:'Hello!'
         }
     ],
     transitions: [
         {
-            fromState: 1,
-            input: ' ',
-            toState: 0
-        },
-        {
-            fromState: 1,
-            input: 'other',
+            fromState: 0,
+            input: 'a',
             toState: 1
         },
         {
             fromState: 0,
             input: 'h',
-            toState: 2
-        },
-        {
-            fromState: 0,
-            input: ' ',
-            toState: 0
+            toState: 6
         },
         {
             fromState: 0,
             input: 'other',
-            toState: 1
+            toState: 0
+        },
+        {
+            fromState: 1,
+            input: 'l',
+            toState: 2
+        },
+        {
+            fromState: 1,
+            input: 'other',
+            toState: 0
         },
         {
             fromState: 2,
-            input: 'i',
+            input: 'o',
             toState: 3
         },
         {
             fromState: 2,
-            input: ' ',
+            input: 'other',
             toState: 0
         },
         {
-            fromState: 2,
-            input: 'other',
-            toState: 1
-        },
-        {
             fromState: 3,
-            input: ' ',
+            input: 'h',
             toState: 4
         },
         {
             fromState: 3,
             input: 'other',
-            toState: 1
+            toState: 0
+        },
+        {
+            fromState: 4,
+            input: 'a',
+            toState: 5
+        },
+        {
+            fromState: 4,
+            input: 'i',
+            toState: 7
         },
         {
             fromState: 4,
             input: 'other',
-            toState: 4
+            toState: 0
+        },
+        {
+            fromState: 5,
+            input: 'other',
+            toState: 5
+        },
+        {
+            fromState: 6,
+            input: 'i',
+            toState: 7
+        },
+        {
+            fromState: 6,
+            input: 'other',
+            toState: 0
+        },
+        {
+            fromState: 7,
+            input: 'other',
+            toState: 7
         }
     ]
 });
@@ -182,4 +226,14 @@ var stateLabels = svg.append("g").selectAll("text")
     .classed('state-label',true)
     .text((d,i) => i);
 
+    var setCurrent = function(states) {
+        circles.classed("current",(d,i) => _.includes(states,i));
+        labelContainer.classed("current",d => _.includes(states,d.__data__.fromState));
+        paths.classed("current",d => _.includes(states,d.fromState));
+    };
+
+    d3.select('#string').on('input',function(d,i) {
+        var states = stateMachine.matchString(this.value);
+        setCurrent(states);
+    });
 
