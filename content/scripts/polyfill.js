@@ -1,5 +1,5 @@
 if (!Array.prototype.includes) {
-  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {'use strict';
+  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {"use strict";
     var O = Object(this);
     var len = parseInt(O.length) || 0;
     if (len === 0) {
@@ -27,7 +27,7 @@ if (!Array.prototype.includes) {
 }
 
 if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
+  Array.prototype.find = function(predicate) {"use strict";
     if (this === null) {
       throw new TypeError('Array.prototype.find called on null or undefined');
     }
