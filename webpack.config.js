@@ -11,7 +11,8 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader' },
-            { test: /\.css$/, loader: "style-loader!css-loader" }
+            { test: /\.css$/, loader: "style-loader!css-loader" },
+            { test: /\.jsx$/, loader: "jsx" }
         ]
     }
 };
