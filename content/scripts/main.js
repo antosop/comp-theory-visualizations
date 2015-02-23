@@ -1,62 +1,65 @@
-"use strict";
-import StateMachine from './state-machine';
-import css from '../styles/main.css';
-import _ from 'lodash';
-import React from 'react';
+//import StateMachine from './state-machine';
+var StateMachine = require('./state-machine');
+//import css from '../styles/main.css';
+require('../styles/main.css');
+//import _ from 'lodash';
+//var _ = require('lodash');
+//import React from 'react'
+var React = require('react');
 
-var stateMachine = React.render(<StateMachine/>,document.getElementById('container'));
+var stateMachine = React.render(<StateMachine/>, document.getElementById('container'));
 
 stateMachine.setState({
     states: [
         {
-            name:'A',
-            x:100,
-            y:200,
-            isAcceptState:false
+            name: 'A',
+            x: 100,
+            y: 200,
+            isAcceptState: false
         },
         {
-            name:'B',
-            x:175,
-            y:200,
-            isAcceptState:false
+            name: 'B',
+            x: 175,
+            y: 200,
+            isAcceptState: false
         },
         {
-            name:'C',
-            x:250,
-            y:200,
-            isAcceptState:false
+            name: 'C',
+            x: 250,
+            y: 200,
+            isAcceptState: false
         },
         {
-            name:'D',
-            x:325,
-            y:200,
-            isAcceptState:false
+            name: 'D',
+            x: 325,
+            y: 200,
+            isAcceptState: false
         },
         {
-            name:'E',
-            x:400,
-            y:200,
-            isAcceptState:false,
+            name: 'E',
+            x: 400,
+            y: 200,
+            isAcceptState: false
         },
         {
-            name:'F',
-            x:475,
-            y:200,
-            isAcceptState:true,
-            response:'AloooooHAAAaa!'
+            name: 'F',
+            x: 475,
+            y: 200,
+            isAcceptState: true,
+            response: 'AloooooHAAAaa!'
         },
         {
-            name:'H',
-            x:175,
-            y:100,
-            isAcceptState:false,
+            name: 'H',
+            x: 175,
+            y: 100,
+            isAcceptState: false
         },
         {
-            name:'I',
-            x:250,
-            y:100,
-            isAcceptState:true,
-            response:'Hello!'
+            name: 'I',
+            x: 250,
+            y: 100,
+            isAcceptState: true,
+            response: 'Hello!'
         }
     ],
     transitions: [
@@ -143,9 +146,7 @@ stateMachine.setState({
     ]
 });
 
-stateMachine.matchString("hi he said.");
-
-var pathStartPositions = [];
+stateMachine.matchString('hi he said.');
 
 //var svg = d3.select("svg");
 //var paths = svg.append("g").selectAll("path")
@@ -239,4 +240,3 @@ var pathStartPositions = [];
         //var states = stateMachine.matchString(this.value);
         //setCurrent(states);
     //});
-

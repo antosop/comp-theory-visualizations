@@ -1,8 +1,8 @@
-"use strict";
+//import React from 'react/addons';
+var React = require('react/addons');
 
-import React from 'react/addons';
-
-export default React.createClass({
+//export default React.createClass({
+module.exports = React.createClass({
     propTypes: {
         active: React.PropTypes.bool.isRequired,
         x: React.PropTypes.number.isRequired,
@@ -15,9 +15,9 @@ export default React.createClass({
             state: true,
             'accept-state': this.props.accept,
             current: this.props.active
-        })
+        });
         return (
             <circle className={classes} r="25" cx={this.props.x} cy={this.props.y} />
-        )
+        );
     }
 });

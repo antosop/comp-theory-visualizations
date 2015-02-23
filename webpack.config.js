@@ -10,9 +10,9 @@ module.exports = {
 	},
     module: {
         loaders: [
-            { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader' },
+            { test: /\.js$/, exclude: /node_modules/, loader: '6to5!eslint' },
             { test: /\.css$/, loader: "style-loader!css-loader" },
-            { test: /\.jsx$/, loader: "jsx!6to5" }
+            { test: /\.jsx$/, loader: "jsx!6to5!eslint" }
         ]
     }
 };
