@@ -1,15 +1,17 @@
+/** @jsx React.DOM */
 "use strict";
 
 import _ from 'lodash';
-import React from 'react';
+import React from 'react/addons';
+import StateTransition from './state-transition';
 
-export default StateMachine = React.createClass({
+export default React.createClass({
 
     render() {
         return (
-            <svg>
-                <defs>
-                    <marker id="triangle" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
+            <svg className="state-machine">
+                <defs >
+                    <marker id="triangle" viewBox="0 0 10 10" dangerouslySetInnerHTML={{refX: 9, refY: 5, markerUnits:"strokeWidth", markerWidth:8, markerHeight:6, orient:"auto"}}>
                         <path d="M 0 0 L 10 5 L 0 10 z" />
                     </marker>
                     <marker id="triangle-selected" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
@@ -17,24 +19,9 @@ export default StateMachine = React.createClass({
                     </marker>
                 </defs>
                 <g id="transitions">
-                this.state.transitions.map(t => {
-                    var isActive = t.fromState === this.state.activeState;
-                    var startState = this.state.states[t.fromState];
-                    var endState = this.state.states[t.toState];
-                    <StateTransition
-                        active={isActive}
-                        startX={startState.x}
-                        startY={startState.y}
-                        endX={endState.x}
-                        endY={endState.y}
-                        input={t.input}
-                    />
-                })
+                {this.state.transitions.map(this.mapStateTransition)}
                 </g>
                 <g id="states">
-                this.state.states.map( (s,i) => {
-                    <State x={s.x} y={s.y} accept={s.isAcceptState} active={i === this.state.activeState}/>
-                });
                 </g>
                 <g id="labelContainers">
                 //TODO
@@ -43,7 +30,21 @@ export default StateMachine = React.createClass({
                 <g id="stateLabels"></g>
            </svg>
         )
-    }
+    },
+
+    mapStateTransition(t){
+        var isActive = t.fromState === this.state.activeState;
+        var startState = this.state.states[t.fromState];
+        var endState = this.state.states[t.toState];
+        return(<StateTransition
+            active={isActive}
+            startX={startState.x}
+            startY={startState.y}
+            endX={endState.x}
+            endY={endState.y}
+            input={t.input}
+        />)
+    },
 
     getInitialState(){
         return {
@@ -87,13 +88,13 @@ export default StateMachine = React.createClass({
             console.log(c);
             console.log(currentStates);
         }
-        console.log(currentStates.filter(s => this.states[s].isAcceptState).map(s => this.states[s].response));
+        console.log(currentStates.filter(s => this.state.states[s].isAcceptState).map(s => this.state.states[s].response));
         return currentStates;
     },
 
     nextStates(currentStates, input) {
-        var characterTransitions = this.transitions.filter(t => t.input !== 'other');
-        var otherTransitions = this.transitions.filter(t => t.input === 'other');
+        var characterTransitions = this.state.transitions.filter(t => t.input !== 'other');
+        var otherTransitions = this.state.transitions.filter(t => t.input === 'other');
         var newStates = [];
         var matchedStates = [];
         characterTransitions.forEach(t => {

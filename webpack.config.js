@@ -12,7 +12,7 @@ module.exports = {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader' },
             { test: /\.css$/, loader: "style-loader!css-loader" },
-            { test: /\.jsx$/, loader: "6to5!jsx" }
+            { test: /\.jsx$/, loader: "jsx!6to5" }
         ]
     }
 };
