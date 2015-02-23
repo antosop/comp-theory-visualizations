@@ -1,8 +1,8 @@
 module.exports = {
 	//configuration
 	entry: {
-		main: ["./content/scripts/main.js"],
-		d3: "./node_modules/d3/d3.js"
+		main: ["./content/scripts/main.js"]
+		//d3: "./node_modules/d3/d3.js"
 	},
 	output: {
 		path: __dirname + "/dist",
@@ -12,7 +12,7 @@ module.exports = {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: '6to5-loader' },
             { test: /\.css$/, loader: "style-loader!css-loader" },
-            { test: /\.jsx$/, loader: "jsx" }
+            { test: /\.jsx$/, loader: "6to5!jsx" }
         ]
     }
 };

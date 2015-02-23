@@ -1,74 +1,83 @@
 "use strict";
 
 import _ from 'lodash';
+import React from 'react';
 
-export default class StateMachine {
-    constructor(object) {
-        if (object){
-            this.states = object.states;
-            this.names = {};
-            this.updateNames();
-            this.transitions = object.transitions;
-        } else {
-            this.states = [
-                {
+export default StateMachine = React.createClass({
+
+    render() {
+        return (
+            <svg>
+                <defs>
+                    <marker id="triangle" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" />
+                    </marker>
+                    <marker id="triangle-selected" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" />
+                    </marker>
+                </defs>
+                <g id="transitions">
+                this.state.transitions.map(t => {
+                    var isActive = t.fromState === this.state.activeState;
+                    var startState = this.state.states[t.fromState];
+                    var endState = this.state.states[t.toState];
+                    <StateTransition
+                        active={isActive}
+                        startX={startState.x}
+                        startY={startState.y}
+                        endX={endState.x}
+                        endY={endState.y}
+                        input={t.input}
+                    />
+                })
+                </g>
+                <g id="states">
+                this.state.states.map( (s,i) => {
+                    <State x={s.x} y={s.y} accept={s.isAcceptState} active={i === this.state.activeState}/>
+                });
+                </g>
+                <g id="labelContainers">
+                //TODO
+                </g>
+                <g id="transitionLabels"></g>
+                <g id="stateLabels"></g>
+           </svg>
+        )
+    }
+
+    getInitialState(){
+        return {
+            states:[{
                     name:null,
                     x:0,
                     y:0,
                     isAcceptState:false
-                }
-            ];
-            this.names = {};
-            this.transitions = [];
+                }],
+            transitions: [],
+            activeState: 0
         }
-    }
+    },
 
-    updateNames() {
-            for (var i = 0; i < this.states.length; i++) {
-                this.updateName(i);
-            }
-    }
+    getInitialStateMachineState(){
+        return this.state.states[0];
+    },
 
-    updateName(index) {
-        var s = this.states[index];
-        if (s.name) this.names[s.name] = index;
-    }
+    getStateMachineAcceptStates() {
+        return this.state.states.filter(s => s.isAcceptState);
+    },
 
-    getInitialState() {
-        return this.states[0];
-    }
+    getTransitions(index) {
+        if (index)
+            return this.transitions.filter(t => t.fromState === index);
+    },
 
-    getAcceptStates() {
-        return this.states.filter(s => s.isAcceptState);
-    }
+    addStateMachineState(obj) {
+        this.states.append(obj);
+    },
 
-    getTransitions(state) {
-        var stateIndex = getStateIndex(state);
-        if (stateIndex)
-            return this.transitions.filter(t => t.fromState === stateIndex);
-    }
-
-    addState(name,x,y,isAcceptState) {
-        var index = this.states.length;
-        this.states.append({name:name, x:x, y:y, isAcceptState:isAcceptState});
-        this.updateName(index);
-    }
-
-    getStateIndex(state){
-        if (typeof state === 'number')
-            return this.states[state] && state;
-        if (typeof state === 'string')
-            return this.names[state];
-        if (state.name)
-            return this.names[state.name];
-
-    }
-
-    addTransition(fromState, toState, input) {
-       var fromStateIndex = getStateIndex(fromState);
-       var toStateIndex = getStateIndex(toState);
-       this.transitions.append({fromState:fromStateIndex, character:input, toState:toStateIndex});
-    }
+    addTransition(obj) {
+       this.transitions.append(obj);
+    },
 
     matchString(string){
         var currentStates = [0];
@@ -80,7 +89,7 @@ export default class StateMachine {
         }
         console.log(currentStates.filter(s => this.states[s].isAcceptState).map(s => this.states[s].response));
         return currentStates;
-    }
+    },
 
     nextStates(currentStates, input) {
         var characterTransitions = this.transitions.filter(t => t.input !== 'other');
@@ -105,4 +114,4 @@ export default class StateMachine {
         });
         return newStates;
     }
-}
+});
