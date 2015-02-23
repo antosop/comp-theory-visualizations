@@ -4,24 +4,27 @@
 import _ from 'lodash';
 import React from 'react/addons';
 import StateTransition from './state-transition';
+import StateMachineState from './state.js';
 
 export default React.createClass({
 
     render() {
         return (
             <svg className="state-machine">
-                <defs >
-                    <marker id="triangle" viewBox="0 0 10 10" dangerouslySetInnerHTML={{refX: 9, refY: 5, markerUnits:"strokeWidth", markerWidth:8, markerHeight:6, orient:"auto"}}>
-                        <path d="M 0 0 L 10 5 L 0 10 z" />
-                    </marker>
-                    <marker id="triangle-selected" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" />
-                    </marker>
+                <defs dangerouslySetInnerHTML={{__html:"<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">" +
+                        "<path d=\"M 0 0 L 10 5 L 0 10 z\" />" +
+                    "</marker>" +
+                    "<marker id=\"triangle-selected\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">" +
+                        "<path d=\"M 0 0 L 10 5 L 0 10 z\" />" +
+                    "</marker>"}}>
                 </defs>
                 <g id="transitions">
                 {this.state.transitions.map(this.mapStateTransition)}
                 </g>
                 <g id="states">
+                {this.state.states.map((s,i) =>
+                    <StateMachineState x={s.x} y={s.y} accept={s.isAcceptState} active={this.state.activeState === i}/>
+                )}
                 </g>
                 <g id="labelContainers">
                 //TODO

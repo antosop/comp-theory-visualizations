@@ -31,8 +31,8 @@ export default React.createClass({
       var loop = true;
       if(this.props.startX !== this.props.endX || this.props.startY !== this.props.endY){
           loop = false;
-          var dx = (this.props.startX - this.props.endX);
-          var dy = (this.props.startY - this.props.endY);
+          var dx = (this.props.endX - this.props.startX);
+          var dy = (this.props.endY - this.props.startY);
           var m = Math.sqrt(dx*dx+dy*dy);
           var sign = dy > 0 ? 1 : -1;
           var a = sign*Math.acos(dx/m);
