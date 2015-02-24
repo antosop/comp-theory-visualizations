@@ -24,16 +24,43 @@ module.exports = React.createClass({
                 </g>
                 <g id="states">
                 {this.state.states.map((s, i) =>
-                    <StateMachineState x={s.x} y={s.y} accept={s.isAcceptState} active={this.state.activeState === i}/>
+                    <StateMachineState x={s.x} y={s.y} accept={s.isAcceptState} active={this.state.activeState === i} />
                 )}
                 </g>
                 <g id="labelContainers">
-                //TODO
+                {this.state.transitions.map((t) => {
+                    var classes = React.addons.classSet({
+                        'label-container': true,
+                        current: this.state.activeState === t.fromState
+                    });
+                    return <circle className={classes} r="12" cx={t.midX} cy={t.midY}/>;
+                })}
                 </g>
                 <g id="transitionLabels"></g>
                 <g id="stateLabels"></g>
            </svg>
         );
+    },
+
+    componentDidUpdate(){
+        var node = this.getDOMNode();
+        var transitionPaths = node.getElementById('transitions').children;
+        var transitions = this.state.transitions;
+        var needsUpdate = false;
+        for (var i = 0; i < transitionPaths.length; i++) {
+            var point = transitionPaths[i].getPointAtLength(transitionPaths[i].getTotalLength() / 2);
+            if (transitions[i].midX !== point.x){
+                transitions[i].midX = point.x;
+                needsUpdate = true;
+            }
+            if (transitions[i].midY !== point.y){
+                transitions[i].midY = point.y;
+                needsUpdate = true;
+            }
+        }
+        if (needsUpdate) {
+            this.setState({transitions: transitions});
+        }
     },
 
     mapStateTransition(t){
