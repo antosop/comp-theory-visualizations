@@ -12,7 +12,7 @@ module.exports = React.createClass({
     render() {
         return (
             <div id="state-machine">
-            <input id="string" onInput={this.stringChanged}/>
+            <input id="string" onKeyDown={this.stringChanged}/>
             <svg className="state-machine-graph">
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
@@ -136,16 +136,16 @@ module.exports = React.createClass({
         for (var i = 0; i < string.length; i++){
             var c = string.charAt(i);
             currentStates = this.nextStates(currentStates, c);
-            console.log(c);
-            console.log(currentStates);
         }
-        console.log(currentStates.filter(s => this.state.states[s].isAcceptState).map(s => this.state.states[s].response));
         return currentStates;
     },
 
-    stringChanged(input){
-        var states = this.matchString(input.value);
+    stringChanged(e){
+        var input = String.fromCharCode(e.keyCode);
+        input = e.shiftKey ? input : input.toLowerCase();
+        var states = this.nextStates(this.state.activeStates, input);
         this.setState({activeStates: states});
+        e.preventDefault();
     },
 
     nextStates(currentStates, input) {
