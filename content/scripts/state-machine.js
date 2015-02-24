@@ -11,7 +11,9 @@ var StateMachineState = require('./state.js');
 module.exports = React.createClass({
     render() {
         return (
-            <svg className="state-machine">
+            <div id="state-machine">
+            <input id="string"/>
+            <svg className="state-machine-graph">
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
                     '</marker>' +
@@ -54,12 +56,13 @@ module.exports = React.createClass({
                 {this.state.states.map((s, i) => <text className="state-label" x={s.x} y={s.y + 5}>{i}</text>)}
                 </g>
            </svg>
+           </div>
         );
     },
 
     componentDidUpdate(){
         var node = this.getDOMNode();
-        var transitionPaths = node.getElementById('transitions').children;
+        var transitionPaths = node.querySelector('#transitions').children;
         var transitions = this.state.transitions;
         var needsUpdate = false;
         for (var i = 0; i < transitionPaths.length; i++) {
