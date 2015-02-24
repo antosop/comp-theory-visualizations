@@ -148,38 +148,6 @@ stateMachine.setState({
 
 stateMachine.matchString('hi he said.');
 
-//var labelContainer = svg.append("g").selectAll("circle")
-    //.data(paths[0])
-    //.enter()
-    //.append("circle")
-    //.attr('r',12)
-    //.attr('cx', d => d.getPointAtLength(d.getTotalLength()/2).x)
-    //.attr('cy', d => d.getPointAtLength(d.getTotalLength()/2).y)
-    //.classed("label-container",true)
-    //.classed("current",d => d.__data__.fromState ===0);
-
-//var characterReplacements = {'other':'*', ' ':'_'};
-
-//var transitionLabels = svg.append("g").selectAll("text")
-    //.data(paths[0])
-    //.enter()
-    //.append("text")
-    //.attr('x', d => d.getPointAtLength(d.getTotalLength()/2).x)
-    //.attr('y', d => d.getPointAtLength(d.getTotalLength()/2).y+5)
-    //.classed("transition-label",true)
-    //.classed("current",d => d.__data__.fromState === 0)
-    //.classed('special',d => (_.has(characterReplacements,d.__data__.input)))
-    //.text(d => _.has(characterReplacements,d.__data__.input) ? characterReplacements[d.__data__.input] : d.__data__.input);
-
-//var stateLabels = svg.append("g").selectAll("text")
-    //.data(stateMachine.states)
-    //.enter()
-    //.append("text")
-    //.attr('x',d => d.x)
-    //.attr('y',d => d.y+5)
-    //.classed('state-label',true)
-    //.text((d,i) => i);
-
     //var setCurrent = function(states) {
         //circles.classed("current",(d,i) => _.includes(states,i));
         //labelContainer.classed("current",d => _.includes(states,d.__data__.fromState));

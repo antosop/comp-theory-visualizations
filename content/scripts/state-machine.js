@@ -36,8 +36,23 @@ module.exports = React.createClass({
                     return <circle className={classes} r="12" cx={t.midX} cy={t.midY}/>;
                 })}
                 </g>
-                <g id="transitionLabels"></g>
-                <g id="stateLabels"></g>
+                <g id="transitionLabels">
+                {this.state.transitions.map((t) => {
+                    var special = null;
+                    if (_.has(this.state.replacementCharacters, t.input)){
+                        special = this.state.replacementCharacters[t.input];
+                    }
+                    var classes = React.addons.classSet({
+                        'transition-label': true,
+                        'current': this.state.activeState === t.fromState,
+                        'special': special !== null
+                    });
+                    return <text className={classes} x={t.midX} y={t.midY + 5}>{special ? special : t.input}</text>;
+                })}
+                </g>
+                <g id="stateLabels">
+                {this.state.states.map((s, i) => <text className="state-label" x={s.x} y={s.y + 5}>{i}</text>)}
+                </g>
            </svg>
         );
     },
@@ -86,7 +101,8 @@ module.exports = React.createClass({
                     isAcceptState: false
                 }],
             transitions: [],
-            activeState: 0
+            activeState: 0,
+            replacementCharacters: {other: '*', ' ': '_'}
         };
     },
 
