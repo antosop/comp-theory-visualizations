@@ -12,7 +12,7 @@ module.exports = React.createClass({
     render() {
         return (
             <div id="state-machine">
-            <input id="string"/>
+            <input id="string" onInput={this.stringChanged}/>
             <svg className="state-machine-graph">
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
@@ -26,14 +26,14 @@ module.exports = React.createClass({
                 </g>
                 <g id="states">
                 {this.state.states.map((s, i) =>
-                    <StateMachineState x={s.x} y={s.y} accept={s.isAcceptState} active={this.state.activeState === i} />
+                    <StateMachineState x={s.x} y={s.y} accept={s.isAcceptState} active={_.includes(this.state.activeStates, i)} />
                 )}
                 </g>
                 <g id="labelContainers">
                 {this.state.transitions.map((t) => {
                     var classes = React.addons.classSet({
                         'label-container': true,
-                        current: this.state.activeState === t.fromState
+                        current: _.includes(this.state.activeStates, t.fromState)
                     });
                     return <circle className={classes} r="12" cx={t.midX} cy={t.midY}/>;
                 })}
@@ -46,7 +46,7 @@ module.exports = React.createClass({
                     }
                     var classes = React.addons.classSet({
                         'transition-label': true,
-                        'current': this.state.activeState === t.fromState,
+                        'current': _.includes(this.state.activeStates, t.fromState),
                         'special': special !== null
                     });
                     return <text className={classes} x={t.midX} y={t.midY + 5}>{special ? special : t.input}</text>;
@@ -82,7 +82,7 @@ module.exports = React.createClass({
     },
 
     mapStateTransition(t){
-        var isActive = t.fromState === this.state.activeState;
+        var isActive = _.includes(this.state.activeStates, t.fromState);
         var startState = this.state.states[t.fromState];
         var endState = this.state.states[t.toState];
         return (<StateTransition
@@ -104,7 +104,7 @@ module.exports = React.createClass({
                     isAcceptState: false
                 }],
             transitions: [],
-            activeState: 0,
+            activeStates: [0],
             replacementCharacters: {other: '*', ' ': '_'}
         };
     },
@@ -141,6 +141,11 @@ module.exports = React.createClass({
         }
         console.log(currentStates.filter(s => this.state.states[s].isAcceptState).map(s => this.state.states[s].response));
         return currentStates;
+    },
+
+    stringChanged(input){
+        var states = this.matchString(input.value);
+        this.setState({activeStates: states});
     },
 
     nextStates(currentStates, input) {
