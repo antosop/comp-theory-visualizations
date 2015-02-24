@@ -63,86 +63,102 @@ stateMachine.setState({
         }
     ],
     transitions: [
-        {
-            fromState: 0,
-            input: 'a',
-            toState: 1
-        },
-        {
-            fromState: 0,
-            input: 'h',
-            toState: 6
-        },
-        {
-            fromState: 0,
-            input: 'other',
-            toState: 0
-        },
-        {
-            fromState: 1,
-            input: 'l',
-            toState: 2
-        },
-        {
-            fromState: 1,
-            input: 'other',
-            toState: 0
-        },
-        {
-            fromState: 2,
-            input: 'o',
-            toState: 3
-        },
-        {
-            fromState: 2,
-            input: 'other',
-            toState: 0
-        },
-        {
-            fromState: 3,
-            input: 'h',
-            toState: 4
-        },
-        {
-            fromState: 3,
-            input: 'other',
-            toState: 0
-        },
-        {
-            fromState: 4,
-            input: 'a',
-            toState: 5
-        },
-        {
-            fromState: 4,
-            input: 'i',
-            toState: 7
-        },
-        {
-            fromState: 4,
-            input: 'other',
-            toState: 0
-        },
-        {
-            fromState: 5,
-            input: 'other',
-            toState: 5
-        },
-        {
-            fromState: 6,
-            input: 'i',
-            toState: 7
-        },
-        {
-            fromState: 6,
-            input: 'other',
-            toState: 0
-        },
-        {
-            fromState: 7,
-            input: 'other',
-            toState: 7
-        }
+        [
+            {
+                fromState: 0,
+                input: 'a',
+                toState: 1
+            },
+            {
+                fromState: 0,
+                input: 'h',
+                toState: 6
+            },
+            {
+                fromState: 0,
+                input: 'other',
+                toState: 0
+            }
+        ],
+        [
+            {
+                fromState: 1,
+                input: 'l',
+                toState: 2
+            },
+            {
+                fromState: 1,
+                input: 'other',
+                toState: 0
+            }
+        ],
+        [
+            {
+                fromState: 2,
+                input: 'o',
+                toState: 3
+            },
+            {
+                fromState: 2,
+                input: 'other',
+                toState: 0
+            }
+        ],
+        [
+            {
+                fromState: 3,
+                input: 'h',
+                toState: 4
+            },
+            {
+                fromState: 3,
+                input: 'other',
+                toState: 0
+            }
+        ],
+        [
+            {
+                fromState: 4,
+                input: 'a',
+                toState: 5
+            },
+            {
+                fromState: 4,
+                input: 'i',
+                toState: 7
+            },
+            {
+                fromState: 4,
+                input: 'other',
+                toState: 0
+            }
+        ],
+        [
+            {
+                fromState: 5,
+                input: 'other',
+                toState: 5
+            }
+        ],
+        [
+            {
+                fromState: 6,
+                input: 'i',
+                toState: 7
+            },
+            {
+                fromState: 6,
+                input: 'other',
+                toState: 0
+            }
+        ],
+        [
+            {
+                fromState: 7,
+                input: 'other',
+                toState: 7
+            }
+        ]
     ]
 });
 

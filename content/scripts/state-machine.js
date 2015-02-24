@@ -12,8 +12,7 @@ module.exports = React.createClass({
     render() {
         return (
             <div id="state-machine">
-            <input id="string" onKeyDown={this.stringChanged}/>
-            <svg className="state-machine-graph">
+            <svg id="state-machine-graph" tabIndex="3" onKeyDown={this.stringChanged}>
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
                     '</marker>' +
@@ -22,24 +21,24 @@ module.exports = React.createClass({
                     '</marker>'}}>
                 </defs>
                 <g id="transitions">
-                {this.state.transitions.map(this.mapStateTransition)}
+                {_.flatten(this.state.transitions).map(this.mapStateTransition)}
                 </g>
                 <g id="states">
                 {this.state.states.map((s, i) =>
-                    <StateMachineState x={s.x} y={s.y} accept={s.isAcceptState} active={_.includes(this.state.activeStates, i)} />
+                    <StateMachineState key={'state' + i} x={s.x} y={s.y} accept={s.isAcceptState} active={_.includes(this.state.activeStates, i)} />
                 )}
                 </g>
                 <g id="labelContainers">
-                {this.state.transitions.map((t) => {
+                {_.flatten(this.state.transitions).map((t, i) => {
                     var classes = React.addons.classSet({
                         'label-container': true,
                         current: _.includes(this.state.activeStates, t.fromState)
                     });
-                    return <circle className={classes} r="12" cx={t.midX} cy={t.midY}/>;
+                    return <circle key={'label-container' + i} className={classes} r="12" cx={t.midX} cy={t.midY}/>;
                 })}
                 </g>
                 <g id="transitionLabels">
-                {this.state.transitions.map((t) => {
+                {_.flatten(this.state.transitions).map((t, i) => {
                     var special = null;
                     if (_.has(this.state.replacementCharacters, t.input)){
                         special = this.state.replacementCharacters[t.input];
@@ -49,35 +48,44 @@ module.exports = React.createClass({
                         'current': _.includes(this.state.activeStates, t.fromState),
                         'special': special !== null
                     });
-                    return <text className={classes} x={t.midX} y={t.midY + 5}>{special ? special : t.input}</text>;
+                    return <text className={classes} key={'transition-label' + i} x={t.midX} y={t.midY + 5}>{special ? special : t.input}</text>;
                 })}
                 </g>
                 <g id="stateLabels">
-                {this.state.states.map((s, i) => <text className="state-label" x={s.x} y={s.y + 5}>{i}</text>)}
+                {this.state.states.map((s, i) => <text className="state-label" key={'state-label' + i} x={s.x} y={s.y + 5}>{i}</text>)}
                 </g>
            </svg>
            </div>
         );
     },
 
+    //componentDidMount(){
+        //window.onkeydown = this.stringChanged;
+    //},
+
     componentDidUpdate(){
         var node = this.getDOMNode();
+
         var transitionPaths = node.querySelector('#transitions').children;
         var transitions = this.state.transitions;
         var needsUpdate = false;
-        for (var i = 0; i < transitionPaths.length; i++) {
-            var point = transitionPaths[i].getPointAtLength(transitionPaths[i].getTotalLength() / 2);
-            if (transitions[i].midX !== point.x){
-                transitions[i].midX = point.x;
-                needsUpdate = true;
+        var count = 0;
+        for (var i = 0; i < transitions.length; i++){
+            for (var j = 0; j < transitions[i].length; j++) {
+                var point = transitionPaths[count].getPointAtLength(transitionPaths[count].getTotalLength() / 2);
+                if (transitions[i][j].midX !== point.x){
+                    transitions[i][j].midX = point.x;
+                    needsUpdate = true;
+                }
+                if (transitions[i][j].midY !== point.y){
+                    transitions[i][j].midY = point.y;
+                    needsUpdate = true;
+                }
+                count++;
             }
-            if (transitions[i].midY !== point.y){
-                transitions[i].midY = point.y;
-                needsUpdate = true;
+            if (needsUpdate) {
+                this.setState({transitions: transitions});
             }
-        }
-        if (needsUpdate) {
-            this.setState({transitions: transitions});
         }
     },
 
@@ -103,7 +111,7 @@ module.exports = React.createClass({
                     y: 0,
                     isAcceptState: false
                 }],
-            transitions: [],
+            transitions: [[]],
             activeStates: [0],
             replacementCharacters: {other: '*', ' ': '_'}
         };
@@ -119,7 +127,7 @@ module.exports = React.createClass({
 
     getTransitions(index) {
         if (index){
-            return this.transitions.filter(t => t.fromState === index);
+            return this.transitions[index];
         }
     },
 
@@ -128,7 +136,7 @@ module.exports = React.createClass({
     },
 
     addTransition(obj) {
-       this.transitions.append(obj);
+       this.transitions[obj.fromState].append(obj);
     },
 
     matchString(string){
@@ -141,34 +149,45 @@ module.exports = React.createClass({
     },
 
     stringChanged(e){
-        var input = String.fromCharCode(e.keyCode);
-        input = e.shiftKey ? input : input.toLowerCase();
-        var states = this.nextStates(this.state.activeStates, input);
-        this.setState({activeStates: states});
-        e.preventDefault();
+        if (e.keyCode !== 9) {
+            var input = String.fromCharCode(e.keyCode);
+            input = e.shiftKey ? input : input.toLowerCase();
+            var states = this.nextStates(this.state.activeStates, input);
+            this.setState({activeStates: states});
+            e.preventDefault();
+        }
     },
 
     nextStates(currentStates, input) {
-        var characterTransitions = this.state.transitions.filter(t => t.input !== 'other');
-        var otherTransitions = this.state.transitions.filter(t => t.input === 'other');
         var newStates = [];
-        var matchedStates = [];
-        characterTransitions.forEach(t => {
-            if (_.includes(currentStates, t.fromState)) {
-                if (t.input === input && !_.includes(newStates, t.toState)){
+        currentStates.forEach(i => {
+            var matchedTransitions = this.state.transitions[i].filter(t => t.input === input);
+            matchedTransitions = matchedTransitions.length > 0 ? matchedTransitions : this.state.transitions[i].filter(t => t.input === 'other');
+            matchedTransitions.forEach(t => {
+                if (!_.includes(newStates, t.toState)) {
                     newStates.push(t.toState);
-                    if (!_.includes(matchedStates, t.fromState)){
-                        matchedStates.push(t.fromState);
-                    }
                 }
-            }
+            });
         });
-        var unmatchedStates = currentStates.filter(s => !_.includes(matchedStates, s));
-        otherTransitions.forEach(t => {
-            if (_.includes(unmatchedStates, t.fromState)) {
-                newStates.push(t.toState);
-            }
-        });
+        //var characterTransitions = this.state.transitions.filter(t => t.input !== 'other');
+        //var otherTransitions = this.state.transitions.filter(t => t.input === 'other');
+        //var matchedStates = [];
+        //characterTransitions.forEach(t => {
+            //if (_.includes(currentStates, t.fromState)) {
+                //if (t.input === input && !_.includes(newStates, t.toState)){
+                    //newStates.push(t.toState);
+                    //if (!_.includes(matchedStates, t.fromState)){
+                        //matchedStates.push(t.fromState);
+                    //}
+                //}
+            //}
+        //});
+        //var unmatchedStates = currentStates.filter(s => !_.includes(matchedStates, s));
+        //otherTransitions.forEach(t => {
+            //if (_.includes(unmatchedStates, t.fromState)) {
+                //newStates.push(t.toState);
+            //}
+        //});
         return newStates;
     }
 });
