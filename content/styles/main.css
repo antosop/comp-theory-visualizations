@@ -36,27 +36,52 @@ div#container {
     bottom:5px;
     left:20vw;
     right:5px;
-    text-align: left;
+    text-align: right;
 }
 
 div#state-machine {
     width: 100%;
     height: 100%;
+    background:#555;
+    overflow: auto;
+}
+
+div#buttons {
+    margin: 10px 10px 10px 10px;
+}
+
+div#buttons .btn-group {
+    float: right;
+}
+
+div#buttons button {
+    background:#555;
+    border-color:#555;
+    color:white;
+}
+
+div#buttons button:hover {
+    background:#666;
+}
+
+div#buttons button:focus {
+    outline-color:yellow;
 }
 
 svg{
     width:100%;
-    height: calc(100% - 21px);
+    height: calc(100% - 54px);
     background:#555;
     margin: auto;
     display: block;
     stroke-width: 2;
 }
 
-#svg-link:focus {
+svg:focus {
 	border-bottom-color: yellow;
 	border-bottom-width: thick;
 	border-bottom-style: solid;
+    outline:none;
 }
 
 input#string {

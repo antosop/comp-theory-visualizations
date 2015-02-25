@@ -4,6 +4,7 @@ var _ = require('lodash');
 var React = require('react/addons');
 
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
+var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 //import StateTransition from './state-transition';
@@ -16,10 +17,14 @@ module.exports = React.createClass({
     render() {
         return (
             <div id="state-machine">
-            <ButtonToolbar>
-            <Button><Glyphicon glyph="refresh" /></Button>
-            </ButtonToolbar>
-            <svg id="state-machine-graph" tabIndex="3" onKeyPress={this.stringChanged}>
+            <div id="buttons">
+                <ButtonToolbar>
+                <ButtonGroup>
+                <Button id="refresh" onClick={this.restart}><Glyphicon glyph="refresh" /></Button>
+                </ButtonGroup>
+                </ButtonToolbar>
+            </div>
+            <svg id="state-machine-graph" ref="svg" tabIndex="3" onKeyDown={this.keyDown} onKeyPress={this.stringChanged}>
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
                     '</marker>' +
@@ -146,6 +151,23 @@ module.exports = React.createClass({
        this.transitions[obj.fromState].append(obj);
     },
 
+    stringChanged(e){
+        var states = this.nextStates(this.state.activeStates, e.key);
+        this.setState({activeStates: states});
+        e.preventDefault();
+    },
+
+    restart(){
+        this.setState({activeStates: [0]});
+        this.refs.svg.getDOMNode().focus();
+    },
+
+    keyDown(e) {
+        if (e.keyCode === 27){
+            this.restart();
+        }
+    },
+
     matchString(string){
         var currentStates = [0];
         for (var i = 0; i < string.length; i++){
@@ -153,12 +175,6 @@ module.exports = React.createClass({
             currentStates = this.nextStates(currentStates, c);
         }
         return currentStates;
-    },
-
-    stringChanged(e){
-        var states = this.nextStates(this.state.activeStates, e.key);
-        this.setState({activeStates: states});
-        e.preventDefault();
     },
 
     nextStates(currentStates, input) {
