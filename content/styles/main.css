@@ -36,6 +36,7 @@ div#container {
     bottom:5px;
     left:20vw;
     right:5px;
+    text-align: left;
 }
 
 div#state-machine {

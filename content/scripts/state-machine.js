@@ -2,6 +2,10 @@
 var _ = require('lodash');
 //import React from 'react/addons';
 var React = require('react/addons');
+
+var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
+var Button = require('react-bootstrap').Button;
+var Glyphicon = require('react-bootstrap').Glyphicon;
 //import StateTransition from './state-transition';
 var StateTransition = require('./state-transition');
 //import StateMachineState from './state.js';
@@ -12,7 +16,10 @@ module.exports = React.createClass({
     render() {
         return (
             <div id="state-machine">
-            <svg id="state-machine-graph" tabIndex="3" onKeyDown={this.stringChanged}>
+            <ButtonToolbar>
+            <Button><Glyphicon glyph="refresh" /></Button>
+            </ButtonToolbar>
+            <svg id="state-machine-graph" tabIndex="3" onKeyPress={this.stringChanged}>
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
                     '</marker>' +
@@ -149,13 +156,9 @@ module.exports = React.createClass({
     },
 
     stringChanged(e){
-        if (e.keyCode !== 9) {
-            var input = String.fromCharCode(e.keyCode);
-            input = e.shiftKey ? input : input.toLowerCase();
-            var states = this.nextStates(this.state.activeStates, input);
-            this.setState({activeStates: states});
-            e.preventDefault();
-        }
+        var states = this.nextStates(this.state.activeStates, e.key);
+        this.setState({activeStates: states});
+        e.preventDefault();
     },
 
     nextStates(currentStates, input) {
