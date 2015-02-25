@@ -16,7 +16,7 @@ var StateMachineState = require('./state.js');
 module.exports = React.createClass({
     render() {
         return (
-            <div id="state-machine">
+            <div id="state-machine" tabIndex="3" onKeyDown={this.keyDown} onKeyPress={this.stringChanged}>
             <div id="buttons">
                 <ButtonToolbar>
                 <ButtonGroup>
@@ -24,7 +24,7 @@ module.exports = React.createClass({
                 </ButtonGroup>
                 </ButtonToolbar>
             </div>
-            <svg id="state-machine-graph" ref="svg" tabIndex="3" onKeyDown={this.keyDown} onKeyPress={this.stringChanged}>
+            <svg id="state-machine-graph">
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
                     '</marker>' +
@@ -159,7 +159,7 @@ module.exports = React.createClass({
 
     restart(){
         this.setState({activeStates: [0]});
-        this.refs.svg.getDOMNode().focus();
+        this.getDOMNode().focus();
     },
 
     keyDown(e) {
