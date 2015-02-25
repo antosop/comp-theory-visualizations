@@ -46,7 +46,7 @@ module.exports = React.createClass({
                         'label-container': true,
                         current: _.includes(this.state.activeStates, t.fromState)
                     });
-                    return <circle key={'label-container' + i} className={classes} r="12" cx={t.midX} cy={t.midY}/>;
+                    return <circle key={'label-container' + i} className={classes} r="12" cx={t.midX ? t.midX : -10} cy={t.midY ? t.midY : -10}/>;
                 })}
                 </g>
                 <g id="transitionLabels">
@@ -60,7 +60,7 @@ module.exports = React.createClass({
                         'current': _.includes(this.state.activeStates, t.fromState),
                         'special': special !== null
                     });
-                    return <text className={classes} key={'transition-label' + i} x={t.midX} y={t.midY + 5}>{special ? special : t.input}</text>;
+                    return <text className={classes} key={'transition-label' + i} x={t.midX ? t.midX : -10} y={t.midY ? t.midY + 5 : -10}>{special ? special : t.input}</text>;
                 })}
                 </g>
                 <g id="stateLabels">
