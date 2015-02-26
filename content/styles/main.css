@@ -68,9 +68,19 @@ div#buttons button:focus {
     outline-color:yellow;
 }
 
+div#response {
+    text-align: center;
+}
+div#response p {
+    font-size:32px;
+    margin: 5px 0 5px 0;
+    font-style:oblique;
+    color:white;
+}
+
 svg{
     width:100%;
-    height: calc(100% - 54px);
+    height: calc(100% - 109px);
     background:#555;
     margin: auto;
     display: block;

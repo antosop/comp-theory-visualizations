@@ -68,7 +68,7 @@ module.exports = React.createClass({
                 </g>
            </svg>
            <div id="response">
-                <p>{'"' + this.getResponse() + '"'}</p>
+                <p>{'"' + this.state.activeStates.map(s => this.state.states[s].response).join('"\n"') + '"'}</p>
            </div>
            </div>
         );
@@ -195,6 +195,6 @@ module.exports = React.createClass({
     },
 
     getResponse() {
-        return this.state.activeStates.map(s => s.response).join('\n');
+        return ;
     }
 });
