@@ -14,12 +14,12 @@ stateMachine.setState({
         {
             name: 'A',
             x: 100,
-            y: 100,
+            y: 300,
             isAcceptState: false
         },
         {
             name: 'B',
-            x: 175,
+            x: 137,
             y: 200,
             isAcceptState: false
         },

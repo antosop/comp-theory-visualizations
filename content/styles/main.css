@@ -14,23 +14,7 @@ body{
     overflow: hidden;
 }
 
-/*div#main {*/
-    /*background: white;*/
-    /*height:100%;*/
-/*}*/
-
-/*div#sidebar {*/
-    /*[>background: white;<]*/
-    /*position: absolute;*/
-    /*top:5px;*/
-    /*bottom:5px;*/
-    /*left:5px;*/
-    /*right:80vw;*/
-/*}*/
-
 div#container {
-    /*padding: 0 0 0 10px;*/
-    /*background:#222;*/
     position: absolute;
     top:5px;
     bottom:5px;
@@ -47,7 +31,10 @@ div#state-machine {
 }
 
 div#buttons {
-    margin: 10px 10px 10px 10px;
+    position: absolute;
+    top:5px;
+    left:5px;
+    right:5px;
 }
 
 div#buttons .btn-group {
@@ -70,17 +57,33 @@ div#buttons button:focus {
 
 div#response {
     text-align: center;
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+    right:5px;
+    background: rgba(0,0,0,.5);
+    word-wrap:normal;
+    overflow:hidden;
 }
+
 div#response p {
     font-size:32px;
-    margin: 5px 0 5px 0;
+    margin: 5px 10px 5px 0;
     font-style:oblique;
+    font-weight:bold;
     color:white;
+    display: inline;
+}
+
+div#response p.label {
+    font-style:normal;
+    font-weight:none;
+    color: #888;
 }
 
 svg{
     width:100%;
-    height: calc(100% - 109px);
+    height: 100%;
     background:#555;
     margin: auto;
     display: block;

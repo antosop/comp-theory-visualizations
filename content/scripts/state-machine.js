@@ -1,3 +1,4 @@
+var $ = require('jquery');
 //import _ from 'lodash';
 var _ = require('lodash');
 //import React from 'react/addons';
@@ -7,6 +8,8 @@ var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var Tooltip = require('react-bootstrap').Tooltip;
+var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 //import StateTransition from './state-transition';
 var StateTransition = require('./state-transition');
 //import StateMachineState from './state.js';
@@ -20,7 +23,13 @@ module.exports = React.createClass({
             <div id="buttons">
                 <ButtonToolbar>
                 <ButtonGroup>
-                <Button id="refresh" onClick={this.restart}><Glyphicon glyph="refresh" /></Button>
+                    <OverlayTrigger placement="left" overlay={
+                        <Tooltip placement="left" right="25px">restart</Tooltip>
+                    } delayShow={300} delayHide={150}>
+                        <Button id="refresh" onMouseOver={this.mouseOver} onClick={this.restart}>
+                            <Glyphicon glyph="refresh" />
+                        </Button>
+                    </OverlayTrigger>
                 </ButtonGroup>
                 </ButtonToolbar>
             </div>
@@ -68,15 +77,14 @@ module.exports = React.createClass({
                 </g>
            </svg>
            <div id="response">
+                <p className="label">message:</p>
+                <p>{ this.state.message }</p>
+                <p className="label">response:</p>
                 <p>{'"' + this.state.activeStates.map(s => this.state.states[s].response).join('"\n"') + '"'}</p>
            </div>
            </div>
         );
     },
-
-    //componentDidMount(){
-        //window.onkeydown = this.stringChanged;
-    //},
 
     componentDidUpdate(){
         var node = this.getDOMNode();
@@ -128,6 +136,8 @@ module.exports = React.createClass({
                 }],
             transitions: [[]],
             activeStates: [0],
+            message: '',
+            defaultResponse: 'how do you greet people?',
             replacementCharacters: {other: '*', ' ': '_'}
         };
     },
@@ -155,19 +165,23 @@ module.exports = React.createClass({
     },
 
     stringChanged(e){
+        if (e.key === 'Enter'){
+            return;
+        }
         var states = this.nextStates(this.state.activeStates, e.key);
-        this.setState({activeStates: states});
+        this.setState({activeStates: states, message: this.state.message + e.key});
         e.preventDefault();
     },
 
     restart(){
-        this.setState({activeStates: [0]});
+        this.setState({activeStates: [0], message: ''});
         this.getDOMNode().focus();
     },
 
     keyDown(e) {
-        if (e.keyCode === 27){
+        if (e.keyCode === 27 || e.keyCode === 8){
             this.restart();
+            e.preventDefault();
         }
     },
 
