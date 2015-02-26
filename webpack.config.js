@@ -18,9 +18,9 @@ module.exports = {
 			{ test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&minetype=application/octet-stream' },
 			{ test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file' },
 			{ test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&minetype=image/svg+xml' },
-            { test: /\.js$/, exclude: /node_modules/, loader: '6to5!eslint' },
+            { test: /\.js$/, exclude: /node_modules/, loader: 'babel!eslint' },
             { test: /\.css$/, loader: 'style-loader!css-loader' },
-            { test: /\.jsx$/, loader: 'jsx!6to5!eslint' }
+            { test: /\.jsx$/, loader: 'jsx!babel!eslint' }
         ]
     }
 };
