@@ -67,6 +67,9 @@ module.exports = React.createClass({
                 {this.state.states.map((s, i) => <text className="state-label" key={'state-label' + i} x={s.x} y={s.y + 5}>{i}</text>)}
                 </g>
            </svg>
+           <div id="response">
+                <p>{'"' + this.getResponse() + '"'}</p>
+           </div>
            </div>
         );
     },
@@ -188,25 +191,10 @@ module.exports = React.createClass({
                 }
             });
         });
-        //var characterTransitions = this.state.transitions.filter(t => t.input !== 'other');
-        //var otherTransitions = this.state.transitions.filter(t => t.input === 'other');
-        //var matchedStates = [];
-        //characterTransitions.forEach(t => {
-            //if (_.includes(currentStates, t.fromState)) {
-                //if (t.input === input && !_.includes(newStates, t.toState)){
-                    //newStates.push(t.toState);
-                    //if (!_.includes(matchedStates, t.fromState)){
-                        //matchedStates.push(t.fromState);
-                    //}
-                //}
-            //}
-        //});
-        //var unmatchedStates = currentStates.filter(s => !_.includes(matchedStates, s));
-        //otherTransitions.forEach(t => {
-            //if (_.includes(unmatchedStates, t.fromState)) {
-                //newStates.push(t.toState);
-            //}
-        //});
         return newStates;
+    },
+
+    getResponse() {
+        return this.state.activeStates.map(s => s.response).join('\n');
     }
 });
