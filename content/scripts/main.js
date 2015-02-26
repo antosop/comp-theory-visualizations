@@ -88,6 +88,16 @@ stateMachine.setState({
             },
             {
                 fromState: 1,
+                input: 'a',
+                toState: 1
+            },
+            {
+                fromState: 1,
+                input: 'h',
+                toState: 6
+            },
+            {
+                fromState: 1,
                 input: 'other',
                 toState: 0
             }
@@ -97,6 +107,16 @@ stateMachine.setState({
                 fromState: 2,
                 input: 'o',
                 toState: 3
+            },
+            {
+                fromState: 2,
+                input: 'a',
+                toState: 1
+            },
+            {
+                fromState: 2,
+                input: 'h',
+                toState: 6
             },
             {
                 fromState: 2,
@@ -112,6 +132,11 @@ stateMachine.setState({
             },
             {
                 fromState: 3,
+                input: 'a',
+                toState: 1
+            },
+            {
+                fromState: 3,
                 input: 'other',
                 toState: 0
             }
@@ -121,6 +146,11 @@ stateMachine.setState({
                 fromState: 4,
                 input: 'a',
                 toState: 5
+            },
+            {
+                fromState: 4,
+                input: 'h',
+                toState: 6
             },
             {
                 fromState: 4,
@@ -145,6 +175,16 @@ stateMachine.setState({
                 fromState: 6,
                 input: 'i',
                 toState: 7
+            },
+            {
+                fromState: 6,
+                input: 'a',
+                toState: 1
+            },
+            {
+                fromState: 6,
+                input: 'h',
+                toState: 6
             },
             {
                 fromState: 6,

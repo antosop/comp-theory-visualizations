@@ -1,4 +1,3 @@
-var $ = require('jquery');
 //import _ from 'lodash';
 var _ = require('lodash');
 //import React from 'react/addons';
@@ -33,7 +32,7 @@ module.exports = React.createClass({
                 </ButtonGroup>
                 </ButtonToolbar>
             </div>
-            <svg id="state-machine-graph">
+            <svg id="state-machine-graph" onMouseMove={this.mouseMove}>
                 <defs dangerouslySetInnerHTML={{__html: '<marker id=\"triangle\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerUnits=\"strokeWidth\" markerWidth=\"8\" markerHeight=\"6\" orient=\"auto\">' +
                         '<path d=\"M 0 0 L 10 5 L 0 10 z\" />' +
                     '</marker>' +
@@ -46,7 +45,7 @@ module.exports = React.createClass({
                 </g>
                 <g id="states">
                 {this.state.states.map((s, i) =>
-                    <StateMachineState key={'state' + i} x={s.x} y={s.y} accept={s.isAcceptState} active={_.includes(this.state.activeStates, i)} />
+                    <StateMachineState key={'state' + i} x={s.x} y={s.y} accept={s.isAcceptState} active={_.includes(this.state.activeStates, i)} onMouseDown={this.stateMouseDown} onMouseUp={this.stateMouseUp}/>
                 )}
                 </g>
                 <g id="labelContainers">
@@ -210,5 +209,43 @@ module.exports = React.createClass({
 
     getResponse() {
         return ;
+    },
+
+    stateMouseDown(state, e) {
+        var node = this.getDOMNode();
+        var svgElem = node.querySelector('#state-machine-graph');
+        var rect = svgElem.getBoundingClientRect();
+        this.setState({
+            dragState: {
+                state: _.findIndex(this.state.states, s => s.x === state.props.x && s.y === state.props.y),
+                currentStateLocation: {
+                    x: state.props.x,
+                    y: state.props.y
+                },
+                startPosition: {
+                    x: e.pageX - rect.left,
+                    y: e.pageY - rect.top
+                }
+            }
+        });
+    },
+    stateMouseUp() {this.setState({dragState: null});},
+    mouseMove(e) {
+        if (this.state.dragState) {
+            var node = this.getDOMNode();
+            var svgElem = node.querySelector('#state-machine-graph');
+            var rect = svgElem.getBoundingClientRect();
+
+            var currentX = e.pageX - rect.left;
+            var currentY = e.pageY - rect.top;
+
+            var states = this.state.states;
+            var dragState = this.state.dragState;
+            var targetState = states[this.state.dragState.state];
+            targetState.x = dragState.currentStateLocation.x + ( currentX - dragState.startPosition.x );
+            targetState.y = dragState.currentStateLocation.y + ( currentY - dragState.startPosition.y );
+
+            this.setState({states: states});
+        }
     }
 });

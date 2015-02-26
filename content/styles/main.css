@@ -90,6 +90,14 @@ svg{
     stroke-width: 2;
 }
 
+svg, svg * {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #state-machine:focus {
 	border-bottom-color: yellow;
 	border-bottom-width: thick;

@@ -17,7 +17,10 @@ module.exports = React.createClass({
             current: this.props.active
         });
         return (
-            <circle className={classes} r="25" cx={this.props.x} cy={this.props.y} />
+            <circle className={classes} r="25" cx={this.props.x} cy={this.props.y} onMouseDown={this.mouseDown} onMouseUp={this.mouseUp} />
         );
-    }
+    },
+
+    mouseDown(e) {this.props.onMouseDown(this, e);},
+    mouseUp(e) {this.props.onMouseUp(this, e);}
 });
