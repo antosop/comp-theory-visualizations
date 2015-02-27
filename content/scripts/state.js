@@ -4,6 +4,7 @@ var React = require('react/addons');
 //export default React.createClass({
 module.exports = React.createClass({
     propTypes: {
+        label: React.ProtoTypes.string.isRequired,
         active: React.PropTypes.bool.isRequired,
         x: React.PropTypes.number.isRequired,
         y: React.PropTypes.number.isRequired,
@@ -17,7 +18,10 @@ module.exports = React.createClass({
             current: this.props.active
         });
         return (
-            <circle className={classes} r="25" cx={this.props.x} cy={this.props.y} onMouseDown={this.mouseDown} onMouseUp={this.mouseUp} />
+            <g className={classes}>
+                <circle r="25" cx={this.props.x} cy={this.props.y} onMouseDown={this.mouseDown} onMouseUp={this.mouseUp} />
+                <text className="state-label" x={this.props.x} y={this.props.y + 5}>{this.props.label}</text>
+            </g>
         );
     },
 
