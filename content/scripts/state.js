@@ -4,7 +4,8 @@ var React = require('react/addons');
 //export default React.createClass({
 module.exports = React.createClass({
     propTypes: {
-        label: React.ProtoTypes.string.isRequired,
+        index: React.PropTypes.number.isRequired,
+        label: React.PropTypes.string.isRequired,
         active: React.PropTypes.bool.isRequired,
         x: React.PropTypes.number.isRequired,
         y: React.PropTypes.number.isRequired,
@@ -25,6 +26,5 @@ module.exports = React.createClass({
         );
     },
 
-    mouseDown(e) {this.props.onMouseDown(this, e);},
-    mouseUp(e) {this.props.onMouseUp(this, e);}
+    mouseDown(e) {this.props.onMouseDown(this, e, this.props.index);}
 });

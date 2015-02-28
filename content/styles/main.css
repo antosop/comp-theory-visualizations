@@ -117,42 +117,51 @@ input#string {
     fill:yellow;
 }
 
-path.transition {
+g.transition path {
     stroke:black;
     fill:none;
     marker-end: url(#triangle);
 }
 
-path.transition.current {
+g.transition.current path {
     stroke:yellow;
     marker-end: url(#triangle-selected);
 }
 
-circle.state {
+g.state circle {
     stroke:black;
     fill:#aaa;
 }
 
-circle.state.accept-state {
+g.state.accept-state circle {
     fill:#3BB;
 }
 
-circle.state.current {
+g.state.current circle {
     stroke:yellow;
 }
 
 circle.label-container {
+    z-index: 30;
+    position: relative;
     stroke: black;
     fill: black;
 }
 
-circle.label-container.current {
+g.transition.current circle.label-container {
     stroke: yellow;
 }
 
 text.transition-label {
+    z-index:31;
+    position: relative;
     text-anchor:middle;
     fill:white;
+    pointer-events: none;
+}
+
+.glyphicon {
+    pointer-events: none;
 }
 
 text.transition-label.special {
@@ -160,6 +169,9 @@ text.transition-label.special {
 }
 
 text.state-label {
+    z-index: 32;
+    position: relative;
     text-anchor:middle;
     fill:black;
+    pointer-events: none;
 }

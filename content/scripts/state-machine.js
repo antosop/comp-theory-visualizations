@@ -17,17 +17,37 @@ module.exports = React.createClass({
                 <div id="buttons">
                     <ButtonToolbar>
                         <ButtonGroup>
-                            <OverlayTrigger placement="left" overlay={
-                                    <Tooltip placement="left" right="25px">restart</Tooltip>
+                            <OverlayTrigger placement="bottom" overlay={
+                                    <Tooltip >open</Tooltip>
                                 } delayShow={300} delayHide={150}>
-                                <Button id="refresh" onMouseOver={this.mouseOver} onClick={this.restart}>
+                                <Button id="open" onClick={e => {
+                                    var inp = e.target.querySelector('#fileInput');
+                                    if (inp) {inp.click();}
+                                }}>
+                                    <Glyphicon glyph="open" />
+                                    <input id='fileInput' className="hidden" type="file" accept=".sm" onChange={this.openFileHandler}/>
+                                </Button>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="bottom" overlay={
+                                    <Tooltip >save</Tooltip>
+                                } delayShow={300} delayHide={150}>
+                                <Button id="save" download="state-machine.sm" href={'data:text/json;charset=utf-8,' + JSON.stringify(
+                                    {states: this.state.states, transitions: this.state.transitions})}>
+                                    <Glyphicon glyph="save" />
+                                </Button>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="bottom" overlay={
+                                    <Tooltip >restart</Tooltip>
+                                } delayShow={300} delayHide={150}>
+                                <Button id="refresh" onClick={this.restart}>
                                     <Glyphicon glyph="refresh" />
                                 </Button>
                             </OverlayTrigger>
                         </ButtonGroup>
                     </ButtonToolbar>
                 </div>
-                <svg id="state-machine-graph" onMouseMove={this.mouseMove}>
+                <svg id="state-machine-graph" onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}>
+
                     <defs dangerouslySetInnerHTML={{__html:
                         '<marker ' +
                             'id="triangle" ' +
@@ -53,8 +73,7 @@ module.exports = React.createClass({
                         '</marker>'}}>
                     </defs>
                     <g id="transitions">
-                        //{_.flatten(this.state.transitions).map(this.mapStateTransition)}
-                        {_.flatten(this.state.transitions).map(t => {
+                        {_.flatten(this.state.transitions).map((t, i) => {
                             var isActive = _.includes(this.state.activeStates, t.fromState);
                             var startState = this.state.states[t.fromState];
                             var endState = this.state.states[t.toState];
@@ -63,6 +82,8 @@ module.exports = React.createClass({
                                 special = this.state.replacementCharacters[t.input];
                             }
                             return (<StateTransition
+                                key={'transition' + i}
+                                index={i}
                                 active={isActive}
                                 startX={startState.x}
                                 startY={startState.y}
@@ -70,6 +91,8 @@ module.exports = React.createClass({
                                 endY={endState.y}
                                 input={special || t.input}
                                 special={special !== null}
+                                arcDepth={t.arcDepth}
+                                onMouseDown={this.transitionMouseDown}
                             />);
                         })}
                     </g>
@@ -77,13 +100,13 @@ module.exports = React.createClass({
                         {this.state.states.map((s, i) =>
                             <StateMachineState
                                 key={'state' + i}
+                                index={i}
                                 x={s.x}
                                 y={s.y}
                                 accept={s.isAcceptState}
                                 active={_.includes(this.state.activeStates, i)}
                                 label={'' + i}
                                 onMouseDown={this.stateMouseDown}
-                                onMouseUp={this.stateMouseUp}
                             />
                         )}
                     </g>
@@ -184,14 +207,14 @@ module.exports = React.createClass({
         return ;
     },
 
-    stateMouseDown(state, e) {
+    stateMouseDown(state, e, index) {
         var node = this.getDOMNode();
         var svgElem = node.querySelector('#state-machine-graph');
         var rect = svgElem.getBoundingClientRect();
         this.setState({
-            dragState: {
-                state: _.findIndex(this.state.states, s => s.x === state.props.x && s.y === state.props.y),
-                currentStateLocation: {
+            drag: {
+                state: index,
+                currentLocation: {
                     x: state.props.x,
                     y: state.props.y
                 },
@@ -202,9 +225,16 @@ module.exports = React.createClass({
             }
         });
     },
-    stateMouseUp() {this.setState({dragState: null});},
+    transitionMouseDown(transition, e, index) {
+        this.setState({
+            drag: {
+                transition: index
+            }
+        });
+    },
+    mouseUp() {this.setState({drag: null});},
     mouseMove(e) {
-        if (this.state.dragState) {
+        if (this.state.drag) {
             var node = this.getDOMNode();
             var svgElem = node.querySelector('#state-machine-graph');
             var rect = svgElem.getBoundingClientRect();
@@ -213,12 +243,38 @@ module.exports = React.createClass({
             var currentY = e.pageY - rect.top;
 
             var states = this.state.states;
-            var dragState = this.state.dragState;
-            var targetState = states[this.state.dragState.state];
-            targetState.x = dragState.currentStateLocation.x + ( currentX - dragState.startPosition.x );
-            targetState.y = dragState.currentStateLocation.y + ( currentY - dragState.startPosition.y );
-
-            this.setState({states: states});
+            var transitions = _.flatten(this.state.transitions);
+            var drag = this.state.drag;
+            var targetElement;
+            if (this.state.drag.state || this.state.drag.state === 0) {
+                targetElement = states[this.state.drag.state];
+                targetElement.x = drag.currentLocation.x + ( currentX - drag.startPosition.x );
+                targetElement.y = drag.currentLocation.y + ( currentY - drag.startPosition.y );
+                this.setState({states: states});
+            } else {
+                targetElement = transitions[this.state.drag.transition];
+                var fromState = this.state.states[targetElement.fromState];
+                var toState = this.state.states[targetElement.toState];
+                var lenX = toState.x - fromState.x;
+                var lenY = toState.y - fromState.y;
+                var dx = fromState.x - currentX;
+                var dy = fromState.y - currentY;
+                var dist = Math.sqrt(lenX * lenX + lenY * lenY);
+                targetElement.arcDepth = -(lenX * dy - dx * lenY) / dist;
+                this.forceUpdate();
+            }
         }
+    },
+
+    openFileHandler(e) {
+        var that = this;
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(loadEvent) {
+            var result = JSON.parse(loadEvent.target.result);
+            that.setState(result);
+            that.restart();
+        };
+        reader.readAsText(file);
     }
 });
