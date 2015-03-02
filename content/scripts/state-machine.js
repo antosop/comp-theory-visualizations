@@ -25,7 +25,9 @@ module.exports = React.createClass({
                                     if (inp) {inp.click();}
                                 }}>
                                     <Glyphicon glyph="open" />
-                                    <input id='fileInput' className="hidden" type="file" accept=".sm" onChange={this.openFileHandler}/>
+                                    <form id="openForm">
+                                        <input id='fileInput' className="hidden" type="file" accept=".sm" onChange={this.openFileHandler}/>
+                                    </form>
                                 </Button>
                             </OverlayTrigger>
                             <OverlayTrigger placement="bottom" overlay={
@@ -46,8 +48,13 @@ module.exports = React.createClass({
                         </ButtonGroup>
                     </ButtonToolbar>
                 </div>
-                <svg id="state-machine-graph" onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}>
-
+                <svg id="state-machine-graph" viewBox={'' +
+                        this.state.viewBox.x + ' ' +
+                        this.state.viewBox.y + ' ' +
+                        this.state.viewBox.w + ' ' +
+                        this.state.viewBox.h + ' '}
+                    onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}
+                >
                     <defs dangerouslySetInnerHTML={{__html:
                         '<marker ' +
                             'id="triangle" ' +
@@ -130,6 +137,7 @@ module.exports = React.createClass({
                     isAcceptState: false
                 }],
             transitions: [[]],
+            viewBox: {x: 0, y: 0, w: 800, h: 600},
             activeStates: [0],
             message: '',
             defaultResponse: 'how do you greet people?',
@@ -208,9 +216,7 @@ module.exports = React.createClass({
     },
 
     stateMouseDown(state, e, index) {
-        var node = this.getDOMNode();
-        var svgElem = node.querySelector('#state-machine-graph');
-        var rect = svgElem.getBoundingClientRect();
+        var pt = this.pointOnScreen(e);
         this.setState({
             drag: {
                 state: index,
@@ -218,10 +224,7 @@ module.exports = React.createClass({
                     x: state.props.x,
                     y: state.props.y
                 },
-                startPosition: {
-                    x: e.pageX - rect.left,
-                    y: e.pageY - rect.top
-                }
+                startPosition: pt
             }
         });
     },
@@ -235,12 +238,7 @@ module.exports = React.createClass({
     mouseUp() {this.setState({drag: null});},
     mouseMove(e) {
         if (this.state.drag) {
-            var node = this.getDOMNode();
-            var svgElem = node.querySelector('#state-machine-graph');
-            var rect = svgElem.getBoundingClientRect();
-
-            var currentX = e.pageX - rect.left;
-            var currentY = e.pageY - rect.top;
+            var point = this.pointOnScreen(e);
 
             var states = this.state.states;
             var transitions = _.flatten(this.state.transitions);
@@ -248,8 +246,8 @@ module.exports = React.createClass({
             var targetElement;
             if (this.state.drag.state || this.state.drag.state === 0) {
                 targetElement = states[this.state.drag.state];
-                targetElement.x = drag.currentLocation.x + ( currentX - drag.startPosition.x );
-                targetElement.y = drag.currentLocation.y + ( currentY - drag.startPosition.y );
+                targetElement.x = drag.currentLocation.x + ( point.x - drag.startPosition.x );
+                targetElement.y = drag.currentLocation.y + ( point.y - drag.startPosition.y );
                 this.setState({states: states});
             } else {
                 targetElement = transitions[this.state.drag.transition];
@@ -257,13 +255,21 @@ module.exports = React.createClass({
                 var toState = this.state.states[targetElement.toState];
                 var lenX = toState.x - fromState.x;
                 var lenY = toState.y - fromState.y;
-                var dx = fromState.x - currentX;
-                var dy = fromState.y - currentY;
+                var dx = fromState.x - point.x;
+                var dy = fromState.y - point.y;
                 var dist = Math.sqrt(lenX * lenX + lenY * lenY);
                 targetElement.arcDepth = -(lenX * dy - dx * lenY) / dist;
                 this.forceUpdate();
             }
         }
+    },
+
+    pointOnScreen(e){
+        var svg = this.getDOMNode().querySelector('#state-machine-graph');
+        var pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        return pt.matrixTransform(svg.getScreenCTM().inverse());
     },
 
     openFileHandler(e) {
@@ -274,6 +280,7 @@ module.exports = React.createClass({
             var result = JSON.parse(loadEvent.target.result);
             that.setState(result);
             that.restart();
+            that.getDOMNode().querySelector('#openForm').reset();
         };
         reader.readAsText(file);
     }
