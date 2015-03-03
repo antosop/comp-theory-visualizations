@@ -199,6 +199,11 @@ g.tool line {
     marker-end: url(#triangle-toolbox);
 }
 
+g.tool.active line{
+    stroke:yellow;
+    marker-end: url(#triangle-selected);
+}
+
 g.transition.current path {
     stroke:yellow;
     marker-end: url(#triangle-selected);

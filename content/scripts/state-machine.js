@@ -12,6 +12,23 @@ var StateMachineState = require('./state.js');
 
 module.exports = React.createClass({
     render() {
+        var addTransition;
+        if (this.state.mode === 'addTransition'){
+            addTransition = <StateTransition
+                index='-1'
+                active='false'
+                startX={this.state.states[this.state.drag.index].x}
+                startY={this.state.states[this.state.drag.index].y}
+                endX={this.state.currentLocation.x}
+                endY={this.state.currentLocation.y}
+                input='*'
+                special='true'
+                arcDepth='0'
+            />;
+        } else {
+            addTransition = '';
+        }
+
         return (
             <div id="state-machine" >
                 <div id="buttons">
@@ -55,7 +72,8 @@ module.exports = React.createClass({
                                 <circle r="25" cx={25} cy={25}/>
                                 <text x={25} y={30}>new</text>
                             </g>
-                            <g className="tool" onMouseDown={this.addTransition}>
+                            <g className={'tool ' + (this.state.mode === 'addTransition' ? 'active' : '')}
+                                onMouseDown={this.addTransitionMode}>
                                 <line x1="0" y1="75" x2="50" y2="75"/>
                             </g>
                         </svg>
@@ -154,6 +172,7 @@ module.exports = React.createClass({
                                 />
                             )}
                         </g>
+                        {addTransition}
                     </svg>
                 </div>
                 <div id="response">
@@ -177,6 +196,7 @@ module.exports = React.createClass({
             transitions: [[]],
             viewBox: {x: 0, y: 0, w: 800, h: 600},
             activeStates: [0],
+            mode: 'normal',
             message: '',
             defaultResponse: 'how do you greet people?',
             replacementCharacters: {other: '*', ' ': '_'}
@@ -269,11 +289,13 @@ module.exports = React.createClass({
         });
     },
     transitionMouseDown(transition, e, index) {
-        this.setState({
-            drag: {
-                transition: index
-            }
-        });
+        if (this.state.mode !== 'addTransition') {
+            this.setState({
+                drag: {
+                    transition: index
+                }
+            });
+        }
     },
     mouseUp() {this.setState({drag: null});},
     mouseMove(e) {
@@ -284,7 +306,11 @@ module.exports = React.createClass({
             var transitions = _.flatten(this.state.transitions);
             drag = this.state.drag;
             var targetElement;
-            if (this.state.drag.state || this.state.drag.state === 0) {
+            if (this.state.mode === 'addTransition') {
+                targetElement = states[this.state.drag.state];
+                drag.currentLocation = {x: point.x, y: point.y};
+                this.forceUpdate();
+            } else if (this.state.drag.state || this.state.drag.state === 0) {
                 targetElement = states[this.state.drag.state];
                 targetElement.x = drag.currentLocation.x + ( point.x - drag.startPosition.x );
                 targetElement.y = drag.currentLocation.y + ( point.y - drag.startPosition.y );
@@ -365,5 +391,9 @@ module.exports = React.createClass({
             });
             this.setState({drag: null, remove: false});
         }
+    },
+
+    addTransitionMode() {
+        this.setState({mode: 'addTransition'});
     }
 });
