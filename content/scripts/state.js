@@ -6,7 +6,7 @@ module.exports = React.createClass({
     propTypes: {
         index: React.PropTypes.number.isRequired,
         label: React.PropTypes.string.isRequired,
-        active: React.PropTypes.bool.isRequired,
+        active: React.PropTypes.bool,
         x: React.PropTypes.number.isRequired,
         y: React.PropTypes.number.isRequired,
         accept: React.PropTypes.bool

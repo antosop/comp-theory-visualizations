@@ -13,7 +13,7 @@ var StateMachineState = require('./state.js');
 module.exports = React.createClass({
     render() {
         return (
-            <div id="state-machine" tabIndex="3" onKeyDown={this.keyDown} onKeyPress={this.stringChanged}>
+            <div id="state-machine" >
                 <div id="buttons">
                     <ButtonToolbar>
                         <ButtonGroup>
@@ -48,76 +48,100 @@ module.exports = React.createClass({
                         </ButtonGroup>
                     </ButtonToolbar>
                 </div>
-                <svg id="state-machine-graph" viewBox={'' +
-                        this.state.viewBox.x + ' ' +
-                        this.state.viewBox.y + ' ' +
-                        this.state.viewBox.w + ' ' +
-                        this.state.viewBox.h + ' '}
-                    onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}
-                >
-                    <defs dangerouslySetInnerHTML={{__html:
-                        '<marker ' +
-                            'id="triangle" ' +
-                            'viewBox="0 0 10 10" ' +
-                            'refX="9" refY="5" ' +
-                            'markerUnits="strokeWidth" ' +
-                            'markerWidth="8" ' +
-                            'markerHeight="6" ' +
-                            'orient="auto"' +
-                        '>' +
-                            '<path d="M 0 0 L 10 5 L 0 10 z" />' +
-                        '</marker>' +
-                        '<marker ' +
-                            'id="triangle-selected" ' +
-                            'viewBox="0 0 10 10" ' +
-                            'refX="9" refY="5" ' +
-                            'markerUnits="strokeWidth" ' +
-                            'markerWidth="8" ' +
-                            'markerHeight="6" ' +
-                            'orient="auto"' +
-                        '>' +
-                            '<path d="M 0 0 L 10 5 L 0 10 z" />' +
-                        '</marker>'}}>
-                    </defs>
-                    <g id="transitions">
-                        {_.flatten(this.state.transitions).map((t, i) => {
-                            var isActive = _.includes(this.state.activeStates, t.fromState);
-                            var startState = this.state.states[t.fromState];
-                            var endState = this.state.states[t.toState];
-                            var special = null;
-                            if (_.has(this.state.replacementCharacters, t.input)){
-                                special = this.state.replacementCharacters[t.input];
-                            }
-                            return (<StateTransition
-                                key={'transition' + i}
-                                index={i}
-                                active={isActive}
-                                startX={startState.x}
-                                startY={startState.y}
-                                endX={endState.x}
-                                endY={endState.y}
-                                input={special || t.input}
-                                special={special !== null}
-                                arcDepth={t.arcDepth}
-                                onMouseDown={this.transitionMouseDown}
-                            />);
-                        })}
-                    </g>
-                    <g id="states">
-                        {this.state.states.map((s, i) =>
-                            <StateMachineState
-                                key={'state' + i}
-                                index={i}
-                                x={s.x}
-                                y={s.y}
-                                accept={s.isAcceptState}
-                                active={_.includes(this.state.activeStates, i)}
-                                label={'' + i}
-                                onMouseDown={this.stateMouseDown}
-                            />
-                        )}
-                    </g>
-                </svg>
+                <div id="graph-container">
+                    <div id="sidebar">
+                        <svg id="tools" viewBox="-8 -8 66 66" preserveAspectRatio="xMidYMin" onMouseUp={this.cancelNew}>
+                            <g className="tool" onMouseDown={this.newState}>
+                                <circle r="25" cx={25} cy={25}/>
+                                <text x={25} y={30}>new</text>
+                            </g>
+                        </svg>
+                        <svg id="trash" viewBox="-8 -8 66 66">
+                            <g className={'tool ' +
+                                (this.state.drag && this.state.drag.state ? 'can-trash ' : '') +
+                                (this.state.remove ? 'remove' : '')
+                            }>
+                                <circle r="25" cx={25} cy={25}
+                                    onMouseOver={() => {if (this.state.drag && this.state.drag.state) {this.setState({remove: true});}}}
+                                    onMouseOut={() => {this.setState({remove: false});}}
+                                    onMouseUp={this.trashState} />
+                                <text x={24} y={38}className="glyphicon">&#xe020;</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <svg id="state-machine-graph" viewBox={'' +
+                            this.state.viewBox.x + ' ' +
+                            this.state.viewBox.y + ' ' +
+                            this.state.viewBox.w + ' ' +
+                            this.state.viewBox.h + ' '}
+                        onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}
+                        onKeyDown={this.keyDown} onKeyPress={this.stringChanged}
+                        tabIndex="3"
+                    >
+                        <defs dangerouslySetInnerHTML={{__html:
+                            '<marker ' +
+                                'id="triangle" ' +
+                                'viewBox="0 0 10 10" ' +
+                                'refX="9" refY="5" ' +
+                                'markerUnits="strokeWidth" ' +
+                                'markerWidth="8" ' +
+                                'markerHeight="6" ' +
+                                'orient="auto"' +
+                            '>' +
+                                '<path d="M 0 0 L 10 5 L 0 10 z" />' +
+                            '</marker>' +
+                            '<marker ' +
+                                'id="triangle-selected" ' +
+                                'viewBox="0 0 10 10" ' +
+                                'refX="9" refY="5" ' +
+                                'markerUnits="strokeWidth" ' +
+                                'markerWidth="8" ' +
+                                'markerHeight="6" ' +
+                                'orient="auto"' +
+                            '>' +
+                                '<path d="M 0 0 L 10 5 L 0 10 z" />' +
+                            '</marker>'}}>
+                        </defs>
+                        <g id="transitions">
+                            {_.flatten(this.state.transitions).map((t, i) => {
+                                var isActive = _.includes(this.state.activeStates, t.fromState);
+                                var startState = this.state.states[t.fromState];
+                                var endState = this.state.states[t.toState];
+                                var special = null;
+                                if (_.has(this.state.replacementCharacters, t.input)){
+                                    special = this.state.replacementCharacters[t.input];
+                                }
+                                return (<StateTransition
+                                    key={'transition' + i}
+                                    index={i}
+                                    active={isActive}
+                                    startX={startState.x}
+                                    startY={startState.y}
+                                    endX={endState.x}
+                                    endY={endState.y}
+                                    input={special || t.input}
+                                    special={special !== null}
+                                    arcDepth={t.arcDepth}
+                                    onMouseDown={this.transitionMouseDown}
+                                />);
+                            })}
+                        </g>
+                        <g id="states">
+                            {this.state.states.map((s, i) =>
+                                <StateMachineState
+                                    key={'state' + i}
+                                    index={i}
+                                    x={s.x}
+                                    y={s.y}
+                                    accept={s.isAcceptState}
+                                    active={_.includes(this.state.activeStates, i)}
+                                    label={'' + i}
+                                    onMouseDown={this.stateMouseDown}
+                                />
+                            )}
+                        </g>
+                    </svg>
+                </div>
                 <div id="response">
                     <p className="label">message:</p>
                     <p>{ this.state.message }</p>
@@ -178,7 +202,9 @@ module.exports = React.createClass({
 
     restart(){
         this.setState({activeStates: [0], message: ''});
-        this.getDOMNode().focus();
+        var node = this.getDOMNode();
+        var graph = node.querySelector('#state-machine-graph');
+        graph.focus();
     },
 
     keyDown(e) {
@@ -237,12 +263,12 @@ module.exports = React.createClass({
     },
     mouseUp() {this.setState({drag: null});},
     mouseMove(e) {
+        var point = this.pointOnScreen(e);
+        var drag;
         if (this.state.drag) {
-            var point = this.pointOnScreen(e);
-
             var states = this.state.states;
             var transitions = _.flatten(this.state.transitions);
-            var drag = this.state.drag;
+            drag = this.state.drag;
             var targetElement;
             if (this.state.drag.state || this.state.drag.state === 0) {
                 targetElement = states[this.state.drag.state];
@@ -261,6 +287,21 @@ module.exports = React.createClass({
                 targetElement.arcDepth = -(lenX * dy - dx * lenY) / dist;
                 this.forceUpdate();
             }
+        } else if (this.state.newState) {
+            var index = this.state.states.length;
+            this.state.states.push({x: point.x, y: point.y, isAccpetState: false});
+            drag = {
+                state: index,
+                currentLocation: {
+                    x: point.x,
+                    y: point.y
+                },
+                startPosition: point
+            };
+            this.setState({
+                newState: false,
+                drag: drag
+            });
         }
     },
 
@@ -283,5 +324,32 @@ module.exports = React.createClass({
             that.getDOMNode().querySelector('#openForm').reset();
         };
         reader.readAsText(file);
+    },
+
+    newState() {
+        this.setState({
+            newState: true
+        });
+    },
+
+    cancelNew(){
+        this.setState({
+            newState: false
+        });
+    },
+
+    trashState() {
+        if (this.state.drag && this.state.drag.state) {
+            this.state.states.splice(this.state.drag.state, 1);
+            this.state.transitions.splice(this.state.drag.state, 1);
+            this.state.transitions.forEach((transitionGroup, groupIndex) => {
+                _.remove(transitionGroup, t => t.toState === this.state.drag.state);
+                transitionGroup.forEach(transition => {
+                    transition.fromState = groupIndex;
+                    transition.toState = transition.toState > this.state.drag.state ? transition.toState - 1 : transition.toState;
+                });
+            });
+            this.setState({drag: null, remove: false});
+        }
     }
 });
