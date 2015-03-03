@@ -183,10 +183,20 @@ input#string {
     fill:yellow;
 }
 
+#triangle-toolbox {
+    fill:white;
+}
+
 g.transition path {
     stroke:black;
     fill:none;
     marker-end: url(#triangle);
+}
+
+g.tool line {
+    stroke:white;
+    fill: none;
+    marker-end: url(#triangle-toolbox);
 }
 
 g.transition.current path {

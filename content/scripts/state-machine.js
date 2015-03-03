@@ -55,6 +55,9 @@ module.exports = React.createClass({
                                 <circle r="25" cx={25} cy={25}/>
                                 <text x={25} y={30}>new</text>
                             </g>
+                            <g className="tool" onMouseDown={this.addTransition}>
+                                <line x1="0" y1="75" x2="50" y2="75"/>
+                            </g>
                         </svg>
                         <svg id="trash" viewBox="-8 -8 66 66">
                             <g className={'tool ' +
@@ -79,6 +82,17 @@ module.exports = React.createClass({
                         tabIndex="3"
                     >
                         <defs dangerouslySetInnerHTML={{__html:
+                            '<marker ' +
+                                'id="triangle-toolbox" ' +
+                                'viewBox="0 0 10 10" ' +
+                                'refX="9" refY="5" ' +
+                                'markerUnits="strokeWidth" ' +
+                                'markerWidth="8" ' +
+                                'markerHeight="6" ' +
+                                'orient="auto"' +
+                            '>' +
+                                '<path d="M 0 0 L 10 5 L 0 10 z" />' +
+                            '</marker>' +
                             '<marker ' +
                                 'id="triangle" ' +
                                 'viewBox="0 0 10 10" ' +
