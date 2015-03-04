@@ -100,7 +100,10 @@ module.exports = {
         stateMouseUp(stateMachine, state, e, index) {
             var fromState = stateMachine.state.drag.state;
             stateMachine.state.transitions[fromState].push({fromState: fromState, input: 'other', toState: index});
-            stateMachine.forceUpdate();
+            stateMachine.restart();
+        },
+        transitionClicked(/*stateMachine, transition, e, index*/) {
+            //stateMachine.setState({mode: module.exports.editInput, edit: index, newInput: ''});
         },
         getAddingTransition(stateMachine){
             if (stateMachine.state.drag){
@@ -139,6 +142,9 @@ module.exports = {
         },
         stateMouseUp(/*stateMachine, state, e, index*/) {
         },
+        transitionClicked(/*stateMachine, transition, e, index*/) {
+            //stateMachine.setState({mode: module.exports.editInput, edit: index, newInput: ''});
+        },
         getAddingTransition(/*stateMachine*/){
         },
         canTrash(){
@@ -147,8 +153,16 @@ module.exports = {
         },
         mouseMove(/*stateMachine, e*/) {
         },
-        keyPressed(/*stateMachine, e*/){
-
+        keyPressed(stateMachine, e){
+            if (e.key === 'Enter'){
+                var editingTransition = _.flatten(stateMachine.state.transitions)[stateMachine.state.edit];
+                if (stateMachine.state.newInput !== ''){
+                    editingTransition.input = stateMachine.state.newInput;
+                }
+                stateMachine.restart();
+            } else {
+                stateMachine.setState({newInput: stateMachine.state.newInput + e.key});
+            }
         }
     }
 };

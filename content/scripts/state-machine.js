@@ -168,7 +168,7 @@ module.exports = React.createClass({
                                     input={special || t.input}
                                     special={special !== null}
                                     arcDepth={t.arcDepth}
-                                    edit={this.state.edit === i}
+                                    edit={this.state.mode === Modes.editInput && this.state.edit === i}
                                     onMouseDown={this.transitionMouseDown}
                                     onClick={this.transitionClicked}
                                 />);
@@ -244,7 +244,7 @@ module.exports = React.createClass({
     },
 
     restart(){
-        this.setState({activeStates: [0], message: ''});
+        this.setState({mode: Modes.normal, activeStates: [0], message: ''});
         var node = this.getDOMNode();
         var graph = node.querySelector('#state-machine-graph');
         graph.focus();
@@ -298,9 +298,9 @@ module.exports = React.createClass({
             this.state.mode.transitionClicked(this, transition, e, index);
         }
     },
-    mouseUp() {this.setState({drag: null, ignoreClick:this.state.moved, moved:false});},
+    mouseUp() {this.setState({drag: null, ignoreClick: this.state.moved, moved: false});},
     mouseMove(e) {
-        this.setState({moved: this.state.drag !== null})
+        this.setState({moved: this.state.drag !== null});
         this.state.mode.mouseMove(this, e);
     },
 
