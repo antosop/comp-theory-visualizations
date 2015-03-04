@@ -91,6 +91,12 @@ module.exports = {
             var states = stateMachine.nextStates(stateMachine.state.activeStates, e.key);
             stateMachine.setState({activeStates: states, message: stateMachine.state.message + e.key});
             e.preventDefault();
+        },
+        keyDown(stateMachine, e) {
+            if (e.keyCode === 27 || e.keyCode === 8){
+                stateMachine.restart();
+                e.preventDefault();
+            }
         }
     },
     addTransition: {
@@ -135,7 +141,11 @@ module.exports = {
         },
         keyPressed(stateMachine, e){
             this.normal.keyPressed(stateMachine, e);
+        },
+        keyDown(stateMachine, e) {
+            module.exports.normal.keyDown(stateMachine, e);
         }
+
     },
     editInput: {
         stateMouseDown(/*stateMachine, state, e, index*/) {
@@ -162,6 +172,17 @@ module.exports = {
                 stateMachine.restart();
             } else {
                 stateMachine.setState({newInput: stateMachine.state.newInput + e.key});
+            }
+        },
+        keyDown(stateMachine, e) {
+            module.exports.normal.keyDown(stateMachine, e);
+            if (e.keyCode === 46){
+                var transition = _.flatten(stateMachine.state.transitions)[stateMachine.state.edit];
+                var list = stateMachine.state.transitions[transition.fromState];
+                var index = _.indexOf(list, transition);
+                list.splice(index, 1);
+                stateMachine.restart();
+                e.preventDefault();
             }
         }
     }

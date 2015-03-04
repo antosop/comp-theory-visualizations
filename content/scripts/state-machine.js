@@ -203,8 +203,8 @@ module.exports = React.createClass({
         return {
             states: [{
                     name: null,
-                    x: 0,
-                    y: 0,
+                    x: 100,
+                    y: 100,
                     isAcceptState: false
                 }],
             transitions: [[]],
@@ -251,10 +251,7 @@ module.exports = React.createClass({
     },
 
     keyDown(e) {
-        if (e.keyCode === 27 || e.keyCode === 8){
-            this.restart();
-            e.preventDefault();
-        }
+        this.state.mode.keyDown(this, e);
     },
 
     matchString(string){
@@ -351,6 +348,7 @@ module.exports = React.createClass({
                 });
             });
             this.setState({drag: null, remove: false});
+            this.restart();
         }
     },
 
