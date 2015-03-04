@@ -55,7 +55,7 @@ div#buttons button:focus {
     outline-color:yellow;
 }
 
-div#response {
+div#footText {
     text-align: center;
     position: absolute;
     left: 5px;
@@ -66,7 +66,7 @@ div#response {
     overflow:hidden;
 }
 
-div#response p {
+div#footText p {
     font-size:32px;
     margin: 5px 10px 5px 0;
     font-style:oblique;
@@ -75,7 +75,7 @@ div#response p {
     display: inline;
 }
 
-div#response p.label {
+div#footText p.label {
     font-style:normal;
     font-weight:none;
     color: #888;
@@ -171,6 +171,10 @@ svg, svg * {
     outline:none;
 }
 
+#state-machine-graph.edit:focus {
+	border-bottom-color: #0FF;
+}
+
 input#string {
     width:796px;
 }
@@ -231,6 +235,10 @@ circle.label-container {
 
 g.transition.current circle.label-container {
     stroke: yellow;
+}
+
+g.transition.edit circle.label-container {
+    stroke: #0FF;
 }
 
 text.transition-label {

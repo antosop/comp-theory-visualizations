@@ -12,13 +12,15 @@ module.exports = React.createClass({
         endY: React.PropTypes.number.isRequired,
         input: React.PropTypes.string.isRequired,
         arcDepth: React.PropTypes.number,
-        special: React.PropTypes.bool
+        special: React.PropTypes.bool,
+        edit: React.PropTypes.bool
     },
 
     render() {
         var classes = React.addons.classSet({
             transition: true,
-            current: this.props.active
+            current: this.props.active,
+            edit: this.props.edit
         });
 
         var labelClasses = React.addons.classSet({
@@ -30,13 +32,14 @@ module.exports = React.createClass({
         return (
             <g className={classes}>
                 <path d={data.pathData}/>
-                <circle className="label-container" r="12" cx={data.midX} cy={data.midY} onMouseDown={this.mouseDown}/>
+                <circle className="label-container" r="12" cx={data.midX} cy={data.midY} onMouseDown={this.mouseDown} onClick={this.clicked}/>
                 <text className={labelClasses} x={data.midX} y={data.midY + 5}>{this.props.input}</text>
             </g>
         );
     },
 
     mouseDown(e) {this.props.onMouseDown(this, e, this.props.index);},
+    clicked(e) {this.props.onClick(this, e, this.props.index);},
 
     calculateData() {
         var returnData = {};

@@ -10,25 +10,39 @@ var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var StateTransition = require('./state-transition');
 var StateMachineState = require('./state.js');
 
+var Modes = require('./mode.js');
+
 module.exports = React.createClass({
     render() {
-        var addTransition;
-        if (this.state.mode === 'addTransition'){
-            addTransition = <StateTransition
-                index='-1'
-                active='false'
-                startX={this.state.states[this.state.drag.index].x}
-                startY={this.state.states[this.state.drag.index].y}
-                endX={this.state.currentLocation.x}
-                endY={this.state.currentLocation.y}
-                input='*'
-                special='true'
-                arcDepth='0'
-            />;
-        } else {
-            addTransition = '';
-        }
 
+        var addingTransition = '';// = this.state.mode.getAddingTransition(this);
+        if (this.state.mode === Modes.addTransition && this.state.drag){
+            addingTransition = <StateTransition
+                index={-1}
+                active={false}
+                startX={this.state.states[this.state.drag.state].x}
+                startY={this.state.states[this.state.drag.state].y}
+                endX={this.state.drag.currentLocation.x}
+                endY={this.state.drag.currentLocation.y}
+                input='*'
+                special={true}
+                arcDepth={0}
+            />;
+        }
+        var footText;
+        if (this.state.edit){
+            footText = <div id="footText">
+                <p className="label">input:</p>
+                <p>{this.state.message}</p>
+            </div>;
+        } else {
+            footText = <div id="footText">
+                <p className="label">message:</p>
+                <p>{ this.state.message }</p>
+                <p className="label">response:</p>
+                <p>{'"' + this.state.activeStates.map(s => this.state.states[s].response).join('"\n"') + '"'}</p>
+            </div>;
+        }
         return (
             <div id="state-machine" >
                 <div id="buttons">
@@ -72,25 +86,25 @@ module.exports = React.createClass({
                                 <circle r="25" cx={25} cy={25}/>
                                 <text x={25} y={30}>new</text>
                             </g>
-                            <g className={'tool ' + (this.state.mode === 'addTransition' ? 'active' : '')}
-                                onMouseDown={this.addTransitionMode}>
+                            <g className={'tool ' + (this.state.mode === Modes.addTransition ? 'active' : '')}
+                                onClick={this.toggleTransitionMode}>
                                 <line x1="0" y1="75" x2="50" y2="75"/>
                             </g>
                         </svg>
                         <svg id="trash" viewBox="-8 -8 66 66">
                             <g className={'tool ' +
-                                (this.state.drag && this.state.drag.state ? 'can-trash ' : '') +
+                                (this.state.mode.canTrash(this) ? 'can-trash ' : '') +
                                 (this.state.remove ? 'remove' : '')
                             }>
                                 <circle r="25" cx={25} cy={25}
-                                    onMouseOver={() => {if (this.state.drag && this.state.drag.state) {this.setState({remove: true});}}}
+                                    onMouseOver={() => {if (this.state.mode.canTrash(this)) {this.setState({remove: true});}}}
                                     onMouseOut={() => {this.setState({remove: false});}}
                                     onMouseUp={this.trashState} />
                                 <text x={24} y={38}className="glyphicon">&#xe020;</text>
                             </g>
                         </svg>
                     </div>
-                    <svg id="state-machine-graph" viewBox={'' +
+                    <svg id="state-machine-graph" className={this.state.edit ? 'edit' : ''} viewBox={'' +
                             this.state.viewBox.x + ' ' +
                             this.state.viewBox.y + ' ' +
                             this.state.viewBox.w + ' ' +
@@ -146,7 +160,7 @@ module.exports = React.createClass({
                                 return (<StateTransition
                                     key={'transition' + i}
                                     index={i}
-                                    active={isActive}
+                                    active={this.state.edit === null && isActive}
                                     startX={startState.x}
                                     startY={startState.y}
                                     endX={endState.x}
@@ -154,7 +168,9 @@ module.exports = React.createClass({
                                     input={special || t.input}
                                     special={special !== null}
                                     arcDepth={t.arcDepth}
+                                    edit={this.state.edit === i}
                                     onMouseDown={this.transitionMouseDown}
+                                    onClick={this.transitionClicked}
                                 />);
                             })}
                         </g>
@@ -166,21 +182,19 @@ module.exports = React.createClass({
                                     x={s.x}
                                     y={s.y}
                                     accept={s.isAcceptState}
-                                    active={_.includes(this.state.activeStates, i)}
+                                    active={this.state.edit === null && _.includes(this.state.activeStates, i)}
                                     label={'' + i}
                                     onMouseDown={this.stateMouseDown}
+                                    onMouseUp={this.stateMouseUp}
                                 />
                             )}
                         </g>
-                        {addTransition}
+                        <g>
+                            {addingTransition}
+                        </g>
                     </svg>
                 </div>
-                <div id="response">
-                    <p className="label">message:</p>
-                    <p>{ this.state.message }</p>
-                    <p className="label">response:</p>
-                    <p>{'"' + this.state.activeStates.map(s => this.state.states[s].response).join('"\n"') + '"'}</p>
-                </div>
+                {footText}
             </div>
         );
     },
@@ -196,8 +210,9 @@ module.exports = React.createClass({
             transitions: [[]],
             viewBox: {x: 0, y: 0, w: 800, h: 600},
             activeStates: [0],
-            mode: 'normal',
+            mode: Modes.normal,
             message: '',
+            edit: null,
             defaultResponse: 'how do you greet people?',
             replacementCharacters: {other: '*', ' ': '_'}
         };
@@ -213,7 +228,7 @@ module.exports = React.createClass({
 
     getTransitions(index) {
         if (index){
-            return this.transitions[index];
+            return this.state.transitions[index];
         }
     },
 
@@ -222,7 +237,7 @@ module.exports = React.createClass({
     },
 
     addTransition(obj) {
-       this.transitions[obj.fromState].append(obj);
+       this.state.transitions[obj.fromState].append(obj);
     },
 
     stringChanged(e){
@@ -276,73 +291,23 @@ module.exports = React.createClass({
     },
 
     stateMouseDown(state, e, index) {
-        var pt = this.pointOnScreen(e);
-        this.setState({
-            drag: {
-                state: index,
-                currentLocation: {
-                    x: state.props.x,
-                    y: state.props.y
-                },
-                startPosition: pt
-            }
-        });
+        this.state.mode.stateMouseDown(this, state, e, index);
+    },
+    stateMouseUp(state, e, index) {
+        this.state.mode.stateMouseUp(this, state, e, index);
     },
     transitionMouseDown(transition, e, index) {
-        if (this.state.mode !== 'addTransition') {
-            this.setState({
-                drag: {
-                    transition: index
-                }
-            });
+        this.state.mode.transitionMouseDown(this, transition, e, index);
+    },
+    transitionClicked(transition, e, index) {
+        if (!this.state.ignoreClick){
+            this.state.mode.transitionClicked(this, transition, e, index);
         }
     },
-    mouseUp() {this.setState({drag: null});},
+    mouseUp() {this.setState({drag: null, ignoreClick:this.state.moved, moved:false});},
     mouseMove(e) {
-        var point = this.pointOnScreen(e);
-        var drag;
-        if (this.state.drag) {
-            var states = this.state.states;
-            var transitions = _.flatten(this.state.transitions);
-            drag = this.state.drag;
-            var targetElement;
-            if (this.state.mode === 'addTransition') {
-                targetElement = states[this.state.drag.state];
-                drag.currentLocation = {x: point.x, y: point.y};
-                this.forceUpdate();
-            } else if (this.state.drag.state || this.state.drag.state === 0) {
-                targetElement = states[this.state.drag.state];
-                targetElement.x = drag.currentLocation.x + ( point.x - drag.startPosition.x );
-                targetElement.y = drag.currentLocation.y + ( point.y - drag.startPosition.y );
-                this.setState({states: states});
-            } else {
-                targetElement = transitions[this.state.drag.transition];
-                var fromState = this.state.states[targetElement.fromState];
-                var toState = this.state.states[targetElement.toState];
-                var lenX = toState.x - fromState.x;
-                var lenY = toState.y - fromState.y;
-                var dx = fromState.x - point.x;
-                var dy = fromState.y - point.y;
-                var dist = Math.sqrt(lenX * lenX + lenY * lenY);
-                targetElement.arcDepth = -(lenX * dy - dx * lenY) / dist;
-                this.forceUpdate();
-            }
-        } else if (this.state.newState) {
-            var index = this.state.states.length;
-            this.state.states.push({x: point.x, y: point.y, isAccpetState: false});
-            drag = {
-                state: index,
-                currentLocation: {
-                    x: point.x,
-                    y: point.y
-                },
-                startPosition: point
-            };
-            this.setState({
-                newState: false,
-                drag: drag
-            });
-        }
+        this.setState({moved: this.state.drag !== null})
+        this.state.mode.mouseMove(this, e);
     },
 
     pointOnScreen(e){
@@ -367,9 +332,11 @@ module.exports = React.createClass({
     },
 
     newState() {
-        this.setState({
-            newState: true
-        });
+        if (this.state.mode === Modes.normal) {
+            this.setState({
+                newState: true
+            });
+        }
     },
 
     cancelNew(){
@@ -379,7 +346,7 @@ module.exports = React.createClass({
     },
 
     trashState() {
-        if (this.state.drag && this.state.drag.state) {
+        if (this.state.mode.canTrash(this)) {
             this.state.states.splice(this.state.drag.state, 1);
             this.state.transitions.splice(this.state.drag.state, 1);
             this.state.transitions.forEach((transitionGroup, groupIndex) => {
@@ -393,7 +360,7 @@ module.exports = React.createClass({
         }
     },
 
-    addTransitionMode() {
-        this.setState({mode: 'addTransition'});
+    toggleTransitionMode() {
+        this.setState({mode: this.state.mode === Modes.addTransition ? Modes.normal : Modes.addTransition });
     }
 });

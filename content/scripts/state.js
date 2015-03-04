@@ -26,5 +26,6 @@ module.exports = React.createClass({
         );
     },
 
-    mouseDown(e) {this.props.onMouseDown(this, e, this.props.index);}
+    mouseDown(e) {if (this.props.onMouseDown) {this.props.onMouseDown(this, e, this.props.index);}},
+    mouseUp(e) {if (this.props.onMouseUp) {this.props.onMouseUp(this, e, this.props.index);}}
 });
