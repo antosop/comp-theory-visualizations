@@ -25,7 +25,7 @@ module.exports = {
 
         },
         transitionClicked(stateMachine, transition, e, index) {
-           stateMachine.setState({edit: index});
+            stateMachine.setState({mode: module.exports.editInput, edit: index, newInput: ''});
         },
         getAddingTransition(){
             return '';
@@ -83,6 +83,14 @@ module.exports = {
                 });
             }
 
+        },
+        keyPressed(stateMachine, e){
+            if (e.key === 'Enter'){
+                return;
+            }
+            var states = stateMachine.nextStates(stateMachine.state.activeStates, e.key);
+            stateMachine.setState({activeStates: states, message: stateMachine.state.message + e.key});
+            e.preventDefault();
         }
     },
     addTransition: {
@@ -113,7 +121,6 @@ module.exports = {
             return false;
         },
         transitionMouseDown(/*stateMachine, transition, e, index*/){
-
         },
         mouseMove(stateMachine, e) {
             if (stateMachine.state.drag) {
@@ -122,6 +129,26 @@ module.exports = {
                 drag.currentLocation = {x: point.x, y: point.y};
                 stateMachine.forceUpdate();
             }
+        },
+        keyPressed(stateMachine, e){
+            this.normal.keyPressed(stateMachine, e);
+        }
+    },
+    editInput: {
+        stateMouseDown(/*stateMachine, state, e, index*/) {
+        },
+        stateMouseUp(/*stateMachine, state, e, index*/) {
+        },
+        getAddingTransition(/*stateMachine*/){
+        },
+        canTrash(){
+        },
+        transitionMouseDown(/*stateMachine, transition, e, index*/){
+        },
+        mouseMove(/*stateMachine, e*/) {
+        },
+        keyPressed(/*stateMachine, e*/){
+
         }
     }
 };

@@ -30,10 +30,10 @@ module.exports = React.createClass({
             />;
         }
         var footText;
-        if (this.state.edit){
+        if (this.state.mode === Modes.editInput){
             footText = <div id="footText">
                 <p className="label">input:</p>
-                <p>{this.state.message}</p>
+                <p>{this.state.newInput}</p>
             </div>;
         } else {
             footText = <div id="footText">
@@ -104,13 +104,13 @@ module.exports = React.createClass({
                             </g>
                         </svg>
                     </div>
-                    <svg id="state-machine-graph" className={this.state.edit ? 'edit' : ''} viewBox={'' +
+                    <svg id="state-machine-graph" className={this.state.mode === Modes.editInput ? 'edit' : ''} viewBox={'' +
                             this.state.viewBox.x + ' ' +
                             this.state.viewBox.y + ' ' +
                             this.state.viewBox.w + ' ' +
                             this.state.viewBox.h + ' '}
                         onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}
-                        onKeyDown={this.keyDown} onKeyPress={this.stringChanged}
+                        onKeyDown={this.keyDown} onKeyPress={this.keyPressed}
                         tabIndex="3"
                     >
                         <defs dangerouslySetInnerHTML={{__html:
@@ -160,7 +160,7 @@ module.exports = React.createClass({
                                 return (<StateTransition
                                     key={'transition' + i}
                                     index={i}
-                                    active={this.state.edit === null && isActive}
+                                    active={this.state.mode !== Modes.editInput && isActive}
                                     startX={startState.x}
                                     startY={startState.y}
                                     endX={endState.x}
@@ -182,7 +182,7 @@ module.exports = React.createClass({
                                     x={s.x}
                                     y={s.y}
                                     accept={s.isAcceptState}
-                                    active={this.state.edit === null && _.includes(this.state.activeStates, i)}
+                                    active={this.state.mode !== Modes.editInput && _.includes(this.state.activeStates, i)}
                                     label={'' + i}
                                     onMouseDown={this.stateMouseDown}
                                     onMouseUp={this.stateMouseUp}
@@ -212,7 +212,6 @@ module.exports = React.createClass({
             activeStates: [0],
             mode: Modes.normal,
             message: '',
-            edit: null,
             defaultResponse: 'how do you greet people?',
             replacementCharacters: {other: '*', ' ': '_'}
         };
@@ -240,13 +239,8 @@ module.exports = React.createClass({
        this.state.transitions[obj.fromState].append(obj);
     },
 
-    stringChanged(e){
-        if (e.key === 'Enter'){
-            return;
-        }
-        var states = this.nextStates(this.state.activeStates, e.key);
-        this.setState({activeStates: states, message: this.state.message + e.key});
-        e.preventDefault();
+    keyPressed(e){
+        this.state.mode.keyPressed(this, e);
     },
 
     restart(){
