@@ -36,11 +36,15 @@ module.exports = React.createClass({
                 <p>{this.state.newInput}</p>
             </div>;
         } else {
+            var response = '"' + this.state.activeStates.map(s => this.state.states[s].response).join('"\r\n"') + '"';
+            if (response === '""'){
+                response = '"' + this.state.defaultResponse + '"';
+            }
             footText = <div id="footText">
                 <p className="label">message:</p>
                 <p>{ this.state.message }</p>
                 <p className="label">response:</p>
-                <p>{'"' + this.state.activeStates.map(s => this.state.states[s].response).join('"\n"') + '"'}</p>
+                <p>{response}</p>
             </div>;
         }
         return (
@@ -65,7 +69,7 @@ module.exports = React.createClass({
                                     <Tooltip >save</Tooltip>
                                 } delayShow={300} delayHide={150}>
                                 <Button id="save" download="state-machine.sm" href={'data:text/json;charset=utf-8,' + JSON.stringify(
-                                    {states: this.state.states, transitions: this.state.transitions})}>
+                                    {states: this.state.states, transitions: this.state.transitions}, null, 2)}>
                                     <Glyphicon glyph="save" />
                                 </Button>
                             </OverlayTrigger>
@@ -111,7 +115,7 @@ module.exports = React.createClass({
                             this.state.viewBox.h + ' '}
                         onMouseMove={this.mouseMove} onMouseUp={this.mouseUp}
                         onKeyDown={this.keyDown} onKeyPress={this.keyPressed}
-                        tabIndex="3"
+                        tabIndex="0"
                     >
                         <defs dangerouslySetInnerHTML={{__html:
                             '<marker ' +
@@ -208,12 +212,12 @@ module.exports = React.createClass({
                     isAcceptState: false
                 }],
             transitions: [[]],
-            viewBox: {x: 0, y: 0, w: 800, h: 600},
+            viewBox: {x: 0, y: 0, w: 800, h: 800},
             activeStates: [0],
             mode: Modes.normal,
             message: '',
-            defaultResponse: 'how do you greet people?',
-            replacementCharacters: {other: '*', ' ': '_'}
+            defaultResponse: 'Tell me about yourself.',
+            replacementCharacters: {other: '*', ' ': '_', epsilon: '\u03B5'}
         };
     },
 
